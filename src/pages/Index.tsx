@@ -1,37 +1,36 @@
 
-import PageLayout from '@/components/PageLayout';
 import Hero from '@/components/Hero';
-import Features from '@/components/Features';
-import Projects from '@/components/Projects';
-import WhyWrlds from '@/components/WhyWrlds';
-import BlogPreview from '@/components/BlogPreview';
+import Mission from '@/components/Mission';
+import EmailSignup from '@/components/EmailSignup';
+import Contact from '@/components/Contact';
 import SEO from '@/components/SEO';
 import { useEffect } from 'react';
 
 const Index = () => {
-  // Fix any ID conflicts when the page loads
+  // Analytics tracking
   useEffect(() => {
-    const contactElements = document.querySelectorAll('[id="contact"]');
-    if (contactElements.length > 1) {
-      // If there are multiple elements with id="contact", rename one
-      contactElements[1].id = 'contact-footer';
+    // Track page view
+    if (typeof window !== 'undefined' && (window as any).gtag) {
+      (window as any).gtag('config', 'GA_TRACKING_ID', {
+        page_title: 'Co-Evolve Network',
+        page_location: window.location.href,
+      });
     }
   }, []);
 
   return (
-    <PageLayout>
+    <div className="bg-black min-h-screen">
       <SEO 
-        title="WRLDS - Smart Textile Technology" 
-        description="WRLDS Technologies: Pioneering smart engineering solutions with textile sensors for sports, safety, and performance monitoring."
+        title="Co-Evolve Network - Architecting Sovereign Independence" 
+        description="Co-Evolve Network: A foundry for the tools, ventures, and community that will power the next generation of AI-augmented creators."
         imageUrl="/lovable-uploads/526dc38a-25fa-40d4-b520-425b23ae0464.png"
-        keywords={['smart textiles', 'wearable technology', 'textile sensors', 'sports tech', 'safety monitoring', 'performance analytics', 'manufacturing']}
+        keywords={['sovereign creators', 'AI augmentation', 'venture foundry', 'independent creators', 'co-evolution', 'network']}
       />
       <Hero />
-      <Features />
-      <WhyWrlds />
-      <Projects />
-      <BlogPreview />
-    </PageLayout>
+      <Mission />
+      <EmailSignup />
+      <Contact />
+    </div>
   );
 };
 

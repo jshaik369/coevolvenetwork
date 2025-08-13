@@ -77,7 +77,8 @@ export default {
 				sm: 'calc(var(--radius) - 4px)'
 			},
 			fontFamily: {
-				'space': ['Space Grotesk', 'sans-serif'],
+				'mono': ['JetBrains Mono', 'Fira Code', 'Consolas', 'Monaco', 'Courier New', 'monospace'],
+				'code': ['Fira Code', 'JetBrains Mono', 'Consolas', 'Monaco', 'Courier New', 'monospace'],
 			},
 			keyframes: {
 				'accordion-down': {
