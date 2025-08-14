@@ -20,11 +20,15 @@ const Mission = () => {
           
           <div className="space-y-8 text-lg md:text-xl text-gray-300 font-mono leading-relaxed">
             <p>
+              <span className="text-primary font-semibold">Bharat → Barcelona → World:</span> We're building a global AI adoption movement that transcends borders, connecting sovereign creators from India's tech hubs to Catalonia's innovation centers and beyond.
+            </p>
+            
+            <p>
               {t('mission.text1')}
             </p>
             
             <p>
-              {t('mission.text2')}
+              Our mission combines the entrepreneurial spirit of Indian independence with Catalonia's history of autonomous innovation, creating a blueprint for AI-augmented sovereignty that respects cultural diversity while fostering global collaboration.
             </p>
           </div>
           

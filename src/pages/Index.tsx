@@ -1,8 +1,12 @@
 
 import Hero from '@/components/Hero';
 import Mission from '@/components/Mission';
+import LiveStats from '@/components/LiveStats';
+import BarcelonaHub from '@/components/BarcelonaHub';
 import CommunityHub from '@/components/CommunityHub';
 import Resources from '@/components/Resources';
+import PressKit from '@/components/PressKit';
+import SocialCampaign from '@/components/SocialCampaign';
 import EmailSignup from '@/components/EmailSignup';
 import Contact from '@/components/Contact';
 import SEO from '@/components/SEO';
@@ -32,8 +36,12 @@ const Index = () => {
         />
         <Hero />
         <Mission />
+        <LiveStats />
+        <BarcelonaHub />
         <CommunityHub />
         <Resources />
+        <PressKit />
+        <SocialCampaign />
         <EmailSignup />
         <Contact />
       </div>

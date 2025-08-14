@@ -2,6 +2,7 @@ import { ChevronDown } from "lucide-react";
 import { motion } from "framer-motion";
 import CobeGlobe from '@/components/CobeGlobe';
 import LanguageSwitcher from '@/components/LanguageSwitcher';
+import TypingAnimation from '@/components/TypingAnimation';
 import { useLanguage } from '@/hooks/useLanguage';
 
 const Hero = () => {
@@ -32,6 +33,23 @@ const Hero = () => {
       
       {/* Overlay Content */}
       <div className="relative z-10 h-full flex flex-col items-center justify-center text-center px-6">
+        {/* Launch Date Banner */}
+        <motion.div
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6 }}
+          className="mb-4"
+        >
+          <div className="inline-flex items-center px-4 py-2 bg-primary/20 border border-primary/30 rounded-full">
+            <span className="text-primary font-mono text-sm">
+              🇮🇳 August 15, 2025 🇪🇸
+            </span>
+            <span className="ml-2 text-gray-300 text-sm">
+              Independence Day Launch: Bharat → Barcelona → World
+            </span>
+          </div>
+        </motion.div>
+
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -41,9 +59,19 @@ const Hero = () => {
           <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold font-code text-white mb-6 tracking-tight">
             {t('hero.title')}
           </h1>
-          <p className="text-lg md:text-xl text-gray-300 max-w-4xl mx-auto font-mono leading-relaxed">
+          <p className="text-lg md:text-xl text-gray-300 max-w-4xl mx-auto font-mono leading-relaxed mb-8">
             {t('hero.subtitle')}
           </p>
+          
+          {/* Psychological Hook Typography */}
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.8, delay: 0.6 }}
+            className="mb-8"
+          >
+            <TypingAnimation className="text-center" />
+          </motion.div>
         </motion.div>
         
         {/* Scroll Indicator */}

@@ -12,6 +12,7 @@ const translations = {
   en: {
     'hero.title': 'CO-EVOLVE NETWORK',
     'hero.subtitle': 'Architecting Sovereign Independence through AI collaboration. A global community foundry building tools and ventures for the next generation of creators.',
+    'hero.launchBanner': 'Independence Day Launch: Bharat → Barcelona → World',
     'mission.title': 'THE MISSION',
     'mission.text1': 'The future belongs to sovereign creators who partner with AI to amplify their unique human experience into scalable impact.',
     'mission.text2': 'We build the infrastructure for this new world. From Barcelona to Bangalore, we believe in proof over promises.',
@@ -44,6 +45,7 @@ const translations = {
   es: {
     'hero.title': 'RED CO-EVOLUCIÓN',
     'hero.subtitle': 'Arquitectando la Independencia Soberana a través de la colaboración con IA. Una fundición comunitaria global construyendo herramientas y ventures para la próxima generación de creadores.',
+    'hero.launchBanner': 'Lanzamiento Día de la Independencia: Bharat → Barcelona → Mundo',
     'mission.title': 'LA MISIÓN',
     'mission.text1': 'El futuro pertenece a creadores soberanos que se asocian con IA para amplificar su experiencia humana única en impacto escalable.',
     'mission.text2': 'Construimos la infraestructura para este nuevo mundo. De Barcelona a Bangalore, creemos en pruebas sobre promesas.',
@@ -76,6 +78,7 @@ const translations = {
   ca: {
     'hero.title': 'XARXA CO-EVOLUCIÓ',
     'hero.subtitle': 'Arquitectant la Independència Sobirana a través de la col·laboració amb IA. Una fundició comunitària global construint eines i ventures per a la propera generació de creadors.',
+    'hero.launchBanner': 'Llançament Dia de la Independència: Bharat → Barcelona → Món',
     'mission.title': 'LA MISSIÓ',
     'mission.text1': 'El futur pertany a creadors sobirans que s\'associen amb IA per amplificar la seva experiència humana única en impacte escalable.',
     'mission.text2': 'Construïm la infraestructura per a aquest nou món. De Barcelona a Bangalore, creiem en proves sobre promeses.',
@@ -108,6 +111,7 @@ const translations = {
   hi: {
     'hero.title': 'को-इवॉल्व नेटवर्क',
     'hero.subtitle': 'AI सहयोग के माध्यम से संप्रभु स्वतंत्रता का वास्तुशिल्प। अगली पीढ़ी के रचनाकारों के लिए उपकरण और उद्यम निर्माण करने वाला वैश्विक समुदाय फाउंड्री।',
+    'hero.launchBanner': 'स्वतंत्रता दिवस लॉन्च: भारत → बार्सिलोना → विश्व',
     'mission.title': 'मिशन',
     'mission.text1': 'भविष्य उन संप्रभु रचनाकारों का है जो AI के साथ साझेदारी करके अपने अनूठे मानवीय अनुभव को स्केलेबल प्रभाव में बदलते हैं।',
     'mission.text2': 'हम इस नई दुनिया के लिए बुनियादी ढांचा बनाते हैं। बार्सिलोना से बैंगलोर तक, हम वादों पर सबूत में विश्वास करते हैं।',

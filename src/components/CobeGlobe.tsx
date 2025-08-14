@@ -39,17 +39,40 @@ const CobeGlobe = ({ className }: CobeGlobeProps) => {
         markerColor: [0.1, 1, 0.5],
         glowColor: [1, 1, 1],
         markers: [
-          // Global community hubs
-          { location: [41.3851, 2.1734], size: 0.07 }, // Barcelona
-          { location: [12.9716, 77.5946], size: 0.06 }, // Bangalore
+          // Primary Hubs (Yellow/Green)
+          { location: [41.3851, 2.1734], size: 0.07 }, // Barcelona - Primary Launch Hub
+          { location: [12.9716, 77.5946], size: 0.06 }, // Bangalore - Primary Launch Hub
+          
+          // Established AI Hubs (Yellow markers)
           { location: [37.7749, -122.4194], size: 0.05 }, // San Francisco
           { location: [40.7128, -74.0060], size: 0.05 }, // New York
           { location: [51.5074, -0.1278], size: 0.05 }, // London
           { location: [35.6762, 139.6503], size: 0.05 }, // Tokyo
+          { location: [43.6532, -79.3832], size: 0.04 }, // Toronto
+          { location: [32.0853, 34.7818], size: 0.04 }, // Tel Aviv
+          { location: [59.3293, 18.0686], size: 0.04 }, // Stockholm
+          { location: [48.8566, 2.3522], size: 0.04 }, // Paris
+          { location: [39.9042, 116.4074], size: 0.04 }, // Beijing
+          { location: [45.5017, -73.5673], size: 0.04 }, // Montreal
+          { location: [49.2827, -123.1207], size: 0.04 }, // Vancouver
+          
+          // Secondary AI Hubs
           { location: [1.3521, 103.8198], size: 0.04 }, // Singapore
           { location: [52.5200, 13.4050], size: 0.04 }, // Berlin
           { location: [19.0760, 72.8777], size: 0.04 }, // Mumbai
           { location: [28.7041, 77.1025], size: 0.04 }, // Delhi
+          
+          // Emerging AI Hubs (Red markers via markerColor variation)
+          { location: [30.2672, -97.7431], size: 0.03 }, // Austin
+          { location: [25.2048, 55.2708], size: 0.03 }, // Dubai
+          { location: [52.3676, 4.9041], size: 0.03 }, // Amsterdam
+          { location: [37.5665, 126.9780], size: 0.03 }, // Seoul
+          { location: [22.3193, 114.1694], size: 0.03 }, // Shenzhen
+          { location: [-33.8688, 151.2093], size: 0.03 }, // Sydney
+          { location: [55.7558, 37.6176], size: 0.03 }, // Moscow
+          { location: [47.6062, -122.3321], size: 0.03 }, // Seattle
+          { location: [34.0522, -118.2437], size: 0.03 }, // Los Angeles
+          { location: [-23.5505, -46.6333], size: 0.03 }, // São Paulo
         ],
         onRender: (state) => {
           // Smooth rotation
