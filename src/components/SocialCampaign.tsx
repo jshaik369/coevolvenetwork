@@ -7,67 +7,28 @@ const SocialCampaign = () => {
   const { toast } = useToast();
   const [copiedIndex, setCopiedIndex] = useState<number | null>(null);
 
-  const socialPosts = [
-    {
-      platform: 'Twitter/X',
-      icon: Twitter,
-      copy: `🚀 August 15: Co-Evolve Network launches!
-
-From Bharat to Barcelona, we're building the future of human-AI collaboration.
-
-🌍 28 AI hub cities connected
-🤝 Indo-Catalan innovation bridge
-💡 Weekly angel rounds in Barcelona
-🧠 Constitutional AI alignment research
-
-Join the sovereign creator movement 👇
-coevolvenetwork.org
-
-#AI #IndependenceDay #Innovation #Barcelona #India #CoEvolve`,
-      handle: '@coevolvenetwork'
-    },
+  const communityPosts = [
     {
       platform: 'LinkedIn',
       icon: Linkedin,
-      copy: `🇮🇳 August 15, 2025: Independence Day Launch 🇪🇸
+      copy: `🌍 Co-Evolve Network: Building Human-AI Collaboration
 
-Co-Evolve Network is bridging Indian innovation with Catalan creativity to architect sovereign independence through AI collaboration.
+We're fostering a global community where creators partner with AI to amplify their unique human experience into scalable impact.
 
-🎯 What we're building:
-• Weekly angel investor rounds in Barcelona
+🎯 What we offer:
 • Cross-cultural AI adoption workshops
-• Failure labs turning startup insights into community wisdom
+• Startup insights and failure analysis 
 • Real-time mentorship for AI-augmented creators
+• Community-driven knowledge sharing
 
-🌍 Our global network spans 28 AI hub cities, from Bangalore to Barcelona, Toronto to Tel Aviv, connecting diverse creators who believe in human-AI partnership over replacement.
+Our network spans multiple AI hub cities, connecting diverse creators who believe in human-AI partnership over replacement.
 
-The future belongs to sovereign creators who partner with AI to amplify their unique human experience into scalable impact.
+The future belongs to sovereign creators who thoughtfully integrate AI into their work.
 
-Ready to co-evolve? Join us: coevolvenetwork.org
+Learn more: coevolvenetwork.org
 
-#ArtificialIntelligence #Innovation #Entrepreneurship #Barcelona #India #StartupEcosystem #AI #TechCommunity`,
+#ArtificialIntelligence #Innovation #Entrepreneurship #StartupEcosystem #AI #TechCommunity`,
       handle: 'Co-Evolve Network'
-    },
-    {
-      platform: 'Instagram',
-      icon: Instagram,
-      copy: `🌍✨ AUGUST 15 LAUNCH ✨🌍
-
-Co-Evolve Network: Where Bharat meets Barcelona 🇮🇳🇪🇸
-
-Building the future of human-AI collaboration, one creator at a time.
-
-🚀 Weekly pitch sessions
-🧠 AI adoption workshops  
-💡 Cross-cultural innovation
-🤝 Global community of 1200+ creators
-
-From constitutional AI research to startup failure labs, we're transforming insights into action.
-
-Join the movement 👆 Link in bio
-
-#CoEvolve #AI #Innovation #Barcelona #India #TechCommunity #CreatorEconomy #IndependenceDay #FutureOfWork`,
-      handle: '@coevolvenetwork'
     }
   ];
 
@@ -105,15 +66,15 @@ Join the movement 👆 Link in bio
           </div>
           
           <h2 className="text-3xl md:text-5xl font-bold font-code text-white mb-6">
-            Spread the Word
+            Join the Conversation
           </h2>
           <p className="text-lg text-gray-300 max-w-3xl mx-auto font-mono leading-relaxed">
-            Help us launch the global AI collaboration movement. Ready-to-share content for all major platforms.
+            Share your AI collaboration story and connect with our global community.
           </p>
         </motion.div>
 
         <div className="space-y-8">
-          {socialPosts.map((post, index) => {
+          {communityPosts.map((post, index) => {
             const Icon = post.icon;
             return (
               <motion.div
@@ -166,9 +127,9 @@ Join the movement 👆 Link in bio
           className="mt-16 text-center"
         >
           <div className="inline-block p-6 bg-gradient-to-r from-primary/10 to-blue-500/10 border border-primary/20 rounded-lg">
-            <h4 className="text-white font-bold font-code mb-4">Join the Movement</h4>
+            <h4 className="text-white font-bold font-code mb-4">Connect With Us</h4>
             <p className="text-sm text-gray-300 font-mono mb-4">
-              Share your story, tag us, and help build the future of human-AI collaboration
+              Follow our journey and share your AI collaboration experiences
             </p>
             <div className="flex justify-center space-x-4">
               <a 

@@ -1,62 +1,57 @@
 import { motion } from 'framer-motion';
-import { Download, FileText, Book, Layers, AlertTriangle } from 'lucide-react';
+import { Book, FileText, Layers, AlertTriangle, ArrowRight, Mail } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useLanguage } from '@/hooks/useLanguage';
+import { Link } from 'react-router-dom';
 
 const Resources = () => {
   const { t } = useLanguage();
 
-  const resources = [
+  const knowledgeBase = [
     {
       icon: Book,
-      title: t('resources.manifesto'),
-      description: 'Our founding principles and vision for sovereign AI collaboration',
-      filename: 'sovereign-manifesto.pdf',
+      title: 'AI Adoption Insights',
+      description: 'Real startup experiences and lessons from our community',
+      actionType: 'blog',
+      actionLabel: 'Read Articles',
       color: 'text-purple-400'
     },
     {
       icon: FileText,
-      title: t('resources.guides'),
-      description: 'Step-by-step guides for non-technical AI adoption',
-      filename: 'ai-adoption-guides.zip',
+      title: 'Community Guides',
+      description: 'Practical guides written by experienced founders',
+      actionType: 'coming-soon',
+      actionLabel: 'Coming Soon',
       color: 'text-blue-400'
     },
     {
       icon: Layers,
-      title: t('resources.templates'),
-      description: 'Complete templates for launching your AI-powered venture',
-      filename: 'launch-templates.zip',
+      title: 'Startup Templates',
+      description: 'Request access to our curated startup resources',
+      actionType: 'contact',
+      actionLabel: 'Request Access',
       color: 'text-green-400'
     },
     {
       icon: AlertTriangle,
-      title: t('resources.failures'),
-      description: 'Real startup failure case studies and extracted lessons',
-      filename: 'failure-case-studies.pdf',
+      title: 'Failure Case Studies',
+      description: 'Anonymous case studies from startup failures and pivots',
+      actionType: 'contact',
+      actionLabel: 'Request Access',
       color: 'text-red-400'
     }
   ];
 
-  const handleDownload = (filename: string, title: string) => {
-    // Create mock content for demonstration
-    const content = `# ${title}\n\nThis is a sample resource from Co-Evolve Network.\n\nFor the full version, please contact us at hello@coevolvenetwork.com\n\n## Community\nJoin our Barcelona community hub for weekly sessions!\n\n---\nCo-Evolve Network © 2024`;
+  const handleAction = (actionType: string, title: string) => {
+    if (actionType === 'contact') {
+      window.location.href = 'mailto:hello@coevolvenetwork.com?subject=Resource Request: ' + title;
+    }
     
-    const blob = new Blob([content], { type: 'text/plain' });
-    const url = window.URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.style.display = 'none';
-    a.href = url;
-    a.download = filename;
-    document.body.appendChild(a);
-    a.click();
-    window.URL.revokeObjectURL(url);
-    document.body.removeChild(a);
-
     // Analytics tracking
     if (typeof window !== 'undefined' && (window as any).gtag) {
-      (window as any).gtag('event', 'resource_download', {
+      (window as any).gtag('event', 'resource_request', {
         event_category: 'engagement',
-        event_label: filename,
+        event_label: title,
         value: 1
       });
     }
@@ -81,7 +76,7 @@ const Resources = () => {
         </motion.div>
 
         <div className="grid md:grid-cols-2 gap-8">
-          {resources.map((resource, index) => (
+          {knowledgeBase.map((resource, index) => (
             <motion.div
               key={index}
               initial={{ opacity: 0, y: 20 }}
@@ -92,28 +87,46 @@ const Resources = () => {
             >
               <div className="flex items-start justify-between mb-4">
                 <resource.icon className={`w-10 h-10 ${resource.color}`} />
-                <Button
-                  onClick={() => handleDownload(resource.filename, resource.title)}
-                  variant="outline"
-                  size="sm"
-                  className="bg-black/50 border-gray-600 text-white hover:bg-gray-700 font-mono"
-                >
-                  <Download className="w-4 h-4 mr-2" />
-                  Download
-                </Button>
+                {resource.actionType === 'blog' ? (
+                  <Link to="/blog">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className="bg-black/50 border-gray-600 text-white hover:bg-gray-700 font-mono"
+                    >
+                      <ArrowRight className="w-4 h-4 mr-2" />
+                      {resource.actionLabel}
+                    </Button>
+                  </Link>
+                ) : resource.actionType === 'contact' ? (
+                  <Button
+                    onClick={() => handleAction(resource.actionType, resource.title)}
+                    variant="outline"
+                    size="sm"
+                    className="bg-black/50 border-gray-600 text-white hover:bg-gray-700 font-mono"
+                  >
+                    <Mail className="w-4 h-4 mr-2" />
+                    {resource.actionLabel}
+                  </Button>
+                ) : (
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    disabled
+                    className="bg-gray-700/50 border-gray-600 text-gray-400 font-mono cursor-not-allowed"
+                  >
+                    {resource.actionLabel}
+                  </Button>
+                )}
               </div>
               
               <h3 className="text-xl font-bold font-code text-white mb-3">
                 {resource.title}
               </h3>
               
-              <p className="text-gray-300 font-mono leading-relaxed mb-4">
+              <p className="text-gray-300 font-mono leading-relaxed">
                 {resource.description}
               </p>
-              
-              <div className="text-xs text-gray-500 font-mono">
-                {resource.filename}
-              </div>
             </motion.div>
           ))}
         </div>
@@ -127,10 +140,10 @@ const Resources = () => {
         >
           <div className="bg-black/50 p-6 rounded-lg border border-gray-700 max-w-2xl mx-auto">
             <p className="text-gray-300 font-mono mb-4">
-              All resources are community-contributed and continuously updated
+              Community-driven knowledge base built by real founders
             </p>
             <p className="text-sm text-gray-400 font-mono">
-              Have resources to contribute? Contact us to become a community contributor
+              Have insights to share? <a href="mailto:hello@coevolvenetwork.com" className="text-primary hover:text-primary/80">Contact us</a> to contribute
             </p>
           </div>
         </motion.div>

@@ -109,16 +109,13 @@ const PressKit = () => {
                     <div className="text-xs text-gray-500 font-mono mb-4">
                       {asset.format}
                     </div>
-                    <button 
+                    <a 
+                      href="mailto:press@coevolvenetwork.org?subject=Press Kit Request: Launcher Deck"
                       className="inline-flex items-center px-4 py-2 bg-primary/20 text-primary border border-primary/30 rounded-lg font-mono text-sm hover:bg-primary/30 transition-colors"
-                      onClick={() => {
-                        // In a real implementation, this would trigger the download
-                        console.log(`Downloading: ${asset.download}`);
-                      }}
                     >
                       <Download className="w-4 h-4 mr-2" />
-                      Download
-                    </button>
+                      Request Asset
+                    </a>
                   </div>
                 </div>
               </motion.div>
