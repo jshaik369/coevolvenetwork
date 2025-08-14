@@ -6,7 +6,6 @@ import BarcelonaHub from '@/components/BarcelonaHub';
 import CommunityHub from '@/components/CommunityHub';
 import Resources from '@/components/Resources';
 import PressKit from '@/components/PressKit';
-import SocialCampaign from '@/components/SocialCampaign';
 import EmailSignup from '@/components/EmailSignup';
 import Contact from '@/components/Contact';
 import SEO from '@/components/SEO';
@@ -41,7 +40,6 @@ const Index = () => {
         <CommunityHub />
         <Resources />
         <PressKit />
-        <SocialCampaign />
         <EmailSignup />
         <Contact />
       </div>

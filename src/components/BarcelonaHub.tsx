@@ -36,19 +36,19 @@ const BarcelonaHub = () => {
     {
       date: 'Aug 22',
       title: 'AI Adoption Workshop',
-      location: 'Fab Lab Barcelona',
+      location: 'Open Terrace • Open to all levels',
       time: '18:00 CET'
     },
     {
       date: 'Aug 29',
       title: 'Angel Investor Pitch Night',
-      location: 'Barcelona Tech City',
+      location: 'Open Terrace • Open to all levels',
       time: '19:30 CET'
     },
     {
       date: 'Sep 5',
       title: 'Indo-Catalan Collaboration Meetup',
-      location: 'Casa Llotja de Mar',
+      location: 'Open Terrace • Open to all levels',
       time: '17:00 CET'
     }
   ];

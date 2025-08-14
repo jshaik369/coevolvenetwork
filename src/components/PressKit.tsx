@@ -173,10 +173,10 @@ const PressKit = () => {
           <div className="inline-block p-6 bg-gradient-to-r from-primary/10 to-blue-500/10 border border-primary/20 rounded-lg">
             <h4 className="text-white font-bold font-code mb-4">Quick Facts</h4>
             <div className="text-sm text-gray-300 font-mono space-y-2">
-              <div>🌍 <span className="text-primary">28 AI hub cities</span> across 6 continents</div>
-              <div>🚀 <span className="text-primary">August 15, 2025</span> Independence Day launch</div>
-              <div>🤝 <span className="text-primary">Indo-Catalan</span> collaboration focus</div>
-              <div>💡 <span className="text-primary">281+ Indian</span> AI startups launched this year</div>
+              <div>• <span className="text-primary">28 AI hub cities</span> across 6 continents</div>
+              <div>• <span className="text-primary">August 15, 2025</span> Independence Day launch</div>
+              <div>• <span className="text-primary">Indo-Catalan</span> collaboration focus</div>
+              <div>• <span className="text-primary">281+ Indian</span> AI startups launched this year</div>
             </div>
           </div>
         </motion.div>
