@@ -1,8 +1,12 @@
 import { ChevronDown } from "lucide-react";
 import { motion } from "framer-motion";
 import CobeGlobe from '@/components/CobeGlobe';
+import LanguageSwitcher from '@/components/LanguageSwitcher';
+import { useLanguage } from '@/hooks/useLanguage';
 
 const Hero = () => {
+  const { t } = useLanguage();
+  
   const scrollToNext = () => {
     const nextSection = document.getElementById('mission');
     if (nextSection) {
@@ -14,9 +18,14 @@ const Hero = () => {
 
   return (
     <section className="relative h-screen w-full bg-black overflow-hidden">
+      {/* Language Switcher */}
+      <div className="absolute top-6 right-6 z-20">
+        <LanguageSwitcher />
+      </div>
+      
       {/* Globe Background */}
       <div className="absolute inset-0 flex items-center justify-center">
-        <div className="w-full h-full max-w-2xl max-h-2xl">
+        <div className="w-full h-full max-w-3xl max-h-3xl">
           <CobeGlobe className="w-full h-full" />
         </div>
       </div>
@@ -27,14 +36,13 @@ const Hero = () => {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.2 }}
-          className="max-w-4xl"
+          className="max-w-5xl"
         >
           <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold font-code text-white mb-6 tracking-tight">
-            CO-EVOLVE NETWORK
+            {t('hero.title')}
           </h1>
-          <p className="text-lg md:text-xl text-gray-300 max-w-3xl mx-auto font-mono leading-relaxed">
-            Architecting the new era of Sovereign Independence. We are a foundry for the tools, 
-            ventures, and community that will power the next generation of AI-augmented creators.
+          <p className="text-lg md:text-xl text-gray-300 max-w-4xl mx-auto font-mono leading-relaxed">
+            {t('hero.subtitle')}
           </p>
         </motion.div>
         

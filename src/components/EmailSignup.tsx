@@ -3,8 +3,10 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { toast } from '@/components/ui/use-toast';
 import { motion } from 'framer-motion';
+import { useLanguage } from '@/hooks/useLanguage';
 
 const EmailSignup = () => {
+  const { t } = useLanguage();
   const [email, setEmail] = useState('');
   const [loading, setLoading] = useState(false);
 
@@ -65,16 +67,16 @@ const EmailSignup = () => {
     >
       <div className="max-w-2xl mx-auto text-center">
         <h2 className="text-3xl md:text-4xl font-bold font-code mb-6 text-green-400">
-          JOIN THE NETWORK
+          {t('signup.title')}
         </h2>
         <p className="text-lg text-gray-300 mb-8 font-mono">
-          Enter the collective. Receive updates on our evolution, new ventures, and exclusive insights into the sovereign creator economy.
+          {t('signup.subtitle')}
         </p>
         
         <form onSubmit={handleSubmit} className="flex flex-col sm:flex-row gap-4 max-w-md mx-auto">
           <Input
             type="email"
-            placeholder="your@email.com"
+            placeholder={t('signup.placeholder')}
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             className="bg-gray-900 border-gray-700 text-white placeholder-gray-400 font-mono focus:border-green-400"
@@ -85,12 +87,12 @@ const EmailSignup = () => {
             disabled={loading}
             className="bg-green-400 hover:bg-green-300 text-black font-mono font-bold px-8"
           >
-            {loading ? 'CONNECTING...' : 'CONNECT'}
+            {loading ? 'CONNECTING...' : t('signup.button')}
           </Button>
         </form>
         
         <p className="text-xs text-gray-500 mt-4 font-mono">
-          No spam. Only signal. Unsubscribe anytime.
+          {t('signup.disclaimer')}
         </p>
       </div>
     </motion.section>
