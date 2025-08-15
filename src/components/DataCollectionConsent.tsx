@@ -150,12 +150,22 @@ const DataCollectionConsent = () => {
 
           <div className="flex gap-3">
             <Button 
-              onClick={handleConsentSubmit}
-              disabled={!hasAnyConsent}
+              onClick={() => {
+                setConsent({ basicAnalytics: true, advancedBehavior: true, collaborationStudy: true, humanDevelopment: true });
+                setTimeout(handleConsentSubmit, 100);
+              }}
               className="flex-1"
             >
               <Lock className="h-4 w-4 mr-2" />
-              Continue with Selected Preferences
+              Accept All
+            </Button>
+            <Button 
+              onClick={handleConsentSubmit}
+              disabled={!hasAnyConsent}
+              variant="outline"
+              className="flex-1"
+            >
+              Continue with Selected
             </Button>
             <Button 
               variant="outline" 
