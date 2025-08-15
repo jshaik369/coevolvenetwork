@@ -1,60 +1,42 @@
-import { motion } from 'framer-motion';
 import { Mail, MapPin, Linkedin } from 'lucide-react';
-import { useLanguage } from '@/hooks/useLanguage';
+import { Button } from '@/components/ui/button';
 
 const Contact = () => {
-  const { t } = useLanguage();
-  
   return (
-    <section id="contact" className="py-24 px-6 border-t border-gray-800">
-      <div className="max-w-4xl mx-auto text-center">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6 }}
-          viewport={{ once: true }}
-        >
-          <h2 className="text-3xl md:text-4xl font-bold font-code text-white mb-6">
-            {t('contact.title')}
-          </h2>
-          <p className="text-lg text-gray-300 mb-12 font-mono">
-            {t('contact.subtitle')}
-          </p>
+    <section id="contact" className="py-24 bg-muted/50">
+      <div className="max-w-4xl mx-auto px-6 text-center">
+        <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-6">
+          Connect with Co-Evolve Network
+        </h2>
+        <p className="text-lg text-muted-foreground mb-12 max-w-2xl mx-auto">
+          Ready to join the global creator community? Get in touch to learn about 
+          accountability partnerships and collaboration opportunities.
+        </p>
+        
+        <div className="flex flex-col sm:flex-row gap-6 justify-center items-center mb-12">
+          <Button asChild size="lg">
+            <a href="mailto:hello@coevolvenetwork.com">
+              <Mail className="w-5 h-5 mr-2" />
+              Email Us
+            </a>
+          </Button>
           
-          <div className="flex flex-col md:flex-row gap-8 justify-center items-center">
-            <motion.a
-              href="mailto:hello@coevolvenetwork.com"
-              className="flex items-center gap-3 text-gray-300 hover:text-green-400 transition-colors font-mono"
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-            >
-              <Mail className="w-6 h-6" />
-              <span>{t('contact.email')}</span>
-            </motion.a>
-            
-            <motion.a
+          <Button variant="outline" asChild size="lg">
+            <a 
               href="https://www.linkedin.com/in/md-shaik-/"
               target="_blank"
               rel="noopener noreferrer"
-              className="flex items-center gap-3 text-gray-300 hover:text-green-400 transition-colors font-mono"
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
             >
-              <Linkedin className="w-6 h-6" />
-              <span>{t('contact.linkedin')}</span>
-            </motion.a>
-            
-            <motion.a
-              href="#"
-              className="flex items-center gap-3 text-gray-300 hover:text-green-400 transition-colors font-mono"
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-            >
-              <MapPin className="w-6 h-6" />
-              <span>{t('contact.barcelona')}</span>
-            </motion.a>
-          </div>
-        </motion.div>
+              <Linkedin className="w-5 h-5 mr-2" />
+              Connect on LinkedIn
+            </a>
+          </Button>
+        </div>
+        
+        <div className="flex items-center justify-center gap-2 text-muted-foreground">
+          <MapPin className="w-5 h-5" />
+          <span>Barcelona, Spain • Bangalore, India</span>
+        </div>
       </div>
     </section>
   );
