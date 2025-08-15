@@ -53,7 +53,7 @@ const Hero = () => {
             className="text-lg px-8 py-6"
             onClick={scrollToContact}
           >
-            Join the Network
+            About Us
           </Button>
           <Button 
             variant="outline" 
