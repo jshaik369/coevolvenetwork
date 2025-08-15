@@ -80,8 +80,7 @@ export default {
 				sans: ['JetBrains Mono', 'Fira Code', 'ui-monospace', 'SFMono-Regular', 'Menlo', 'Monaco', 'Consolas', 'Liberation Mono', 'Courier New', 'monospace'],
 				mono: ['JetBrains Mono', 'Fira Code', 'ui-monospace', 'SFMono-Regular', 'Menlo', 'Monaco', 'Consolas', 'Liberation Mono', 'Courier New', 'monospace'],
 				terminal: ['JetBrains Mono', 'Fira Code', 'monospace'],
-			},
-				'code': ['Fira Code', 'JetBrains Mono', 'Consolas', 'Monaco', 'Courier New', 'monospace'],
+				code: ['Fira Code', 'JetBrains Mono', 'Consolas', 'Monaco', 'Courier New', 'monospace'],
 			},
 			keyframes: {
 				'accordion-down': {
