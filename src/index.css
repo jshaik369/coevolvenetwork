@@ -95,7 +95,6 @@
   scroll-behavior: smooth;
 }
 
-/* Banner styles */
 .banner-container {
   position: relative;
   width: 100%;
@@ -143,7 +142,6 @@
   }
 }
 
-/* Animation classes */
 @keyframes float {
   0% {
     transform: translateY(0);
@@ -258,7 +256,6 @@
   animation: slideIn 0.6s ease-out forwards;
 }
 
-/* Hover animations */
 .hover-underline {
   position: relative;
 }
@@ -286,7 +283,6 @@
   transform: scale(1.05);
 }
 
-/* New pulse animation */
 @keyframes pulse-slow {
   0%, 100% {
     opacity: 1;
