@@ -21,7 +21,7 @@ const SEO: React.FC<SEOProps> = ({
   description = 'Connect creators worldwide through accountability partnerships, pitch feedback, and verifiable outcomes in the AI creator economy. Barcelona and Bangalore hubs.',
   type = 'website',
   name = 'Co-Evolve Network',
-  imageUrl = '/lovable-uploads/526dc38a-25fa-40d4-b520-425b23ae0464.png',
+  imageUrl = '/lovable-uploads/483a60b1-7682-4b57-847c-2628c6e6f3ed.png',
   publishDate,
   modifiedDate,
   author,
