@@ -66,12 +66,12 @@ const Footer = () => {
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-10 pb-10 border-b border-gray-700">
           <div className="lg:col-span-2">
             <img 
-              src="/lovable-uploads/7d120ee6-3614-4b75-9c35-716d54490d67.png" 
-              alt="WRLDS Technologies Logo" 
+              src="/lovable-uploads/483a60b1-7682-4b57-847c-2628c6e6f3ed.png" 
+              alt="Co-Evolve Network Logo" 
               className="h-10 w-auto mb-6 invert" // Added invert to make logo white
             />
             <p className="text-gray-300 mb-6">
-              WRLDS Technologies provides an end-to-end platform for the creation and deployment of AI-powered smart sensor devices, giving customers 100% ownership while handling the complete technological development.
+              Co-Evolve Network provides a global platform for AI-augmented creators, connecting them through accountability partnerships, pitch feedback, and verifiable outcomes in the creator economy.
             </p>
             <p className="text-gray-300 mb-6">
               Hornsgatan 110<br />
@@ -129,7 +129,7 @@ const Footer = () => {
         
         <div className="pt-8 flex flex-col md:flex-row justify-between items-center">
           <p className="text-gray-400 text-sm mb-4 md:mb-0">
-            © {new Date().getFullYear()} WRLDS Technologies. All rights reserved.
+            © {new Date().getFullYear()} Co-Evolve Network. All rights reserved.
           </p>
           <div className="flex space-x-6">
             <Link to="/privacy-policy" className="text-sm text-gray-400 hover:text-white transition-colors">Privacy Policy</Link>
