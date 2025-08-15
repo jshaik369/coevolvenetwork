@@ -1,8 +1,8 @@
-import { useState, useEffect } from 'react';
-import { Button } from '@/components/ui/button';
+import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
-import { Shield, Database, Users, Brain } from 'lucide-react';
+import { Brain, Users, BarChart3, Eye, Shield, Lock } from 'lucide-react';
 
 interface ConsentOptions {
   basicAnalytics: boolean;
@@ -17,148 +17,151 @@ const DataCollectionConsent = () => {
     basicAnalytics: false,
     advancedBehavior: false,
     collaborationStudy: false,
-    humanDevelopment: false
+    humanDevelopment: false,
   });
 
   useEffect(() => {
-    const existingConsent = localStorage.getItem('coevolve-data-consent');
+    const existingConsent = localStorage.getItem('coEvolveConsent');
     if (!existingConsent) {
       setShowConsent(true);
     }
   }, []);
 
   const handleConsentSubmit = () => {
-    localStorage.setItem('coevolve-data-consent', JSON.stringify(consent));
-    localStorage.setItem('coevolve-consent-timestamp', Date.now().toString());
-    setShowConsent(false);
+    const consentData = {
+      ...consent,
+      timestamp: new Date().toISOString(),
+      version: '1.0'
+    };
     
-    // Initialize analytics based on consent
-    // @ts-ignore
-    window.coEvolveConsent = consent;
+    localStorage.setItem('coEvolveConsent', JSON.stringify(consentData));
+    
+    if (typeof window !== 'undefined') {
+      (window as any).coEvolveConsent = consentData;
+    }
+    
+    setShowConsent(false);
   };
 
   const updateConsent = (key: keyof ConsentOptions, value: boolean) => {
     setConsent(prev => ({ ...prev, [key]: value }));
   };
 
+  const hasAnyConsent = Object.values(consent).some(value => value);
+
   if (!showConsent) return null;
 
   return (
     <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-      <Card className="max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+      <Card className="w-full max-w-2xl max-h-[90vh] overflow-y-auto">
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            <Shield className="w-5 h-5 text-primary" />
-            Help Us Study Human Co-Evolution
+            <Brain className="h-6 w-6 text-primary" />
+            Co-Evolution Research Participation
           </CardTitle>
           <CardDescription>
-            Co-Evolve Network is researching how humans and AI collaborate to push the boundaries of creativity and innovation. 
-            Your participation helps us understand human potential in the AI age.
+            Help us understand how AI-augmented creators collaborate and co-evolve. Your participation enables groundbreaking research into human-AI partnership dynamics.
           </CardDescription>
         </CardHeader>
-        
         <CardContent className="space-y-6">
           <div className="space-y-4">
             <div className="flex items-start space-x-3">
-              <Checkbox 
-                id="basic"
+              <Checkbox
+                id="basicAnalytics"
                 checked={consent.basicAnalytics}
                 onCheckedChange={(checked) => updateConsent('basicAnalytics', checked as boolean)}
               />
-              <div className="space-y-1">
-                <label htmlFor="basic" className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
-                  Basic Website Analytics
+              <div className="grid gap-1.5 leading-none">
+                <label htmlFor="basicAnalytics" className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 flex items-center gap-2">
+                  <BarChart3 className="h-4 w-4" />
+                  Basic Analytics
                 </label>
                 <p className="text-xs text-muted-foreground">
-                  Page views, session duration, basic navigation patterns. Standard website optimization data.
+                  Page views, session duration, basic interaction patterns for platform improvement
                 </p>
               </div>
             </div>
 
             <div className="flex items-start space-x-3">
-              <Checkbox 
-                id="behavior"
+              <Checkbox
+                id="advancedBehavior"
                 checked={consent.advancedBehavior}
                 onCheckedChange={(checked) => updateConsent('advancedBehavior', checked as boolean)}
               />
-              <div className="space-y-1 flex-1">
-                <label htmlFor="behavior" className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 flex items-center gap-2">
-                  <Brain className="w-4 h-4" />
-                  Advanced Behavioral Research
+              <div className="grid gap-1.5 leading-none">
+                <label htmlFor="advancedBehavior" className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 flex items-center gap-2">
+                  <Eye className="h-4 w-4" />
+                  Advanced Behavioral Patterns
                 </label>
                 <p className="text-xs text-muted-foreground">
-                  Mouse movements, click patterns, scroll behavior, decision-making patterns. 
-                  Helps us understand how humans process information and make creative decisions.
+                  Mouse movements, scroll patterns, attention heatmaps for UX research
                 </p>
               </div>
             </div>
 
             <div className="flex items-start space-x-3">
-              <Checkbox 
-                id="collaboration"
+              <Checkbox
+                id="collaborationStudy"
                 checked={consent.collaborationStudy}
                 onCheckedChange={(checked) => updateConsent('collaborationStudy', checked as boolean)}
               />
-              <div className="space-y-1 flex-1">
-                <label htmlFor="collaboration" className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 flex items-center gap-2">
-                  <Users className="w-4 h-4" />
-                  Cross-Cultural Collaboration Study
+              <div className="grid gap-1.5 leading-none">
+                <label htmlFor="collaborationStudy" className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 flex items-center gap-2">
+                  <Users className="h-4 w-4" />
+                  Collaboration Study
                 </label>
                 <p className="text-xs text-muted-foreground">
-                  Communication patterns, cultural preferences, collaboration styles. 
-                  Helps optimize India-Barcelona and global creator partnerships.
+                  Partnership formation patterns, communication styles, project outcomes
                 </p>
               </div>
             </div>
 
             <div className="flex items-start space-x-3">
-              <Checkbox 
-                id="development"
+              <Checkbox
+                id="humanDevelopment"
                 checked={consent.humanDevelopment}
                 onCheckedChange={(checked) => updateConsent('humanDevelopment', checked as boolean)}
               />
-              <div className="space-y-1 flex-1">
-                <label htmlFor="development" className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 flex items-center gap-2">
-                  <Database className="w-4 h-4" />
+              <div className="grid gap-1.5 leading-none">
+                <label htmlFor="humanDevelopment" className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 flex items-center gap-2">
+                  <Brain className="h-4 w-4" />
                   Human Development Research
                 </label>
                 <p className="text-xs text-muted-foreground">
-                  Skill progression, learning patterns, adaptation strategies, resilience factors. 
-                  Contributes to understanding human potential in AI-augmented environments.
+                  Skill progression, learning patterns, AI-augmentation effects on creative development
                 </p>
               </div>
             </div>
           </div>
 
           <div className="bg-muted/50 p-4 rounded-lg">
-            <h4 className="font-medium text-sm mb-2">Data Protection Guarantee</h4>
+            <h4 className="font-medium flex items-center gap-2 mb-2">
+              <Shield className="h-4 w-4" />
+              Data Protection Guarantee
+            </h4>
             <ul className="text-xs text-muted-foreground space-y-1">
-              <li>• All data is encrypted and anonymized</li>
-              <li>• You can withdraw consent and delete your data anytime</li>
-              <li>• Data is used only for research, never sold to third parties</li>
-              <li>• Full GDPR compliance with data ownership rights</li>
+              <li>• All data is anonymized and encrypted</li>
+              <li>• No personal information is stored without explicit consent</li>
+              <li>• Data is used solely for academic research purposes</li>
+              <li>• You can withdraw consent at any time</li>
               <li>• Research findings will be shared openly with the community</li>
             </ul>
           </div>
 
-          <div className="flex flex-col sm:flex-row gap-3">
+          <div className="flex gap-3">
             <Button 
               onClick={handleConsentSubmit}
+              disabled={!hasAnyConsent}
               className="flex-1"
-              disabled={!Object.values(consent).some(Boolean)}
             >
+              <Lock className="h-4 w-4 mr-2" />
               Continue with Selected Preferences
             </Button>
             <Button 
               variant="outline" 
               onClick={() => {
-                setConsent({
-                  basicAnalytics: true,
-                  advancedBehavior: false,
-                  collaborationStudy: false,
-                  humanDevelopment: false
-                });
-                handleConsentSubmit();
+                setConsent({ basicAnalytics: true, advancedBehavior: false, collaborationStudy: false, humanDevelopment: false });
+                setTimeout(handleConsentSubmit, 100);
               }}
               className="flex-1"
             >

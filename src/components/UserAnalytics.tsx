@@ -1,4 +1,5 @@
 import { useEffect, useRef } from 'react';
+import { supabase } from '@/integrations/supabase/client';
 
 interface UserBehaviorData {
   sessionId: string;
@@ -193,17 +194,18 @@ const UserAnalytics = ({ userId, collectAdvancedMetrics = true }: UserAnalyticsP
         isBeforeUnload
       };
 
-      // Use sendBeacon for unload events, fetch for regular intervals
+      // Use sendBeacon for unload events, Supabase function for regular intervals
       if (isBeforeUnload && navigator.sendBeacon) {
         navigator.sendBeacon('/api/analytics', JSON.stringify(dataToSend));
       } else {
-        await fetch('/api/analytics', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify(dataToSend),
+        const response = await supabase.functions.invoke('analytics', {
+          body: dataToSend,
         });
+
+        if (response.error) {
+          console.warn('Analytics request failed:', response.error);
+          return;
+        }
       }
     } catch (error) {
       console.warn('Failed to send analytics data:', error);

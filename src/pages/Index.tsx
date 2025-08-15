@@ -15,6 +15,7 @@ const Index = () => {
         imageUrl="/lovable-uploads/526dc38a-25fa-40d4-b520-425b23ae0464.png"
         keywords={['AI creators', 'accountability partnerships', 'creator economy', 'Barcelona', 'Bangalore', 'AI collaboration']}
       />
+      <DataCollectionConsent />
       <UserAnalytics collectAdvancedMetrics={true} />
       <Hero />
       <Mission />

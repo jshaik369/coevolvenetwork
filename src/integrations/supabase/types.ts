@@ -14,7 +14,51 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      analytics: {
+        Row: {
+          collaboration: Json | null
+          created_at: string
+          cultural_data: Json | null
+          id: string
+          interactions: Json | null
+          is_before_unload: boolean | null
+          location: Json | null
+          session_id: string
+          timestamp: string
+          user_agent: string | null
+          user_id: string | null
+          viewport: Json | null
+        }
+        Insert: {
+          collaboration?: Json | null
+          created_at?: string
+          cultural_data?: Json | null
+          id?: string
+          interactions?: Json | null
+          is_before_unload?: boolean | null
+          location?: Json | null
+          session_id: string
+          timestamp?: string
+          user_agent?: string | null
+          user_id?: string | null
+          viewport?: Json | null
+        }
+        Update: {
+          collaboration?: Json | null
+          created_at?: string
+          cultural_data?: Json | null
+          id?: string
+          interactions?: Json | null
+          is_before_unload?: boolean | null
+          location?: Json | null
+          session_id?: string
+          timestamp?: string
+          user_agent?: string | null
+          user_id?: string | null
+          viewport?: Json | null
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
