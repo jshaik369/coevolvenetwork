@@ -1,5 +1,6 @@
 import { useEffect, useRef } from 'react';
 import { supabase } from '@/integrations/supabase/client';
+import PerformanceMonitor from './PerformanceMonitor';
 
 interface UserBehaviorData {
   sessionId: string;
@@ -238,7 +239,11 @@ const UserAnalytics = ({ userId, collectAdvancedMetrics = true }: UserAnalyticsP
     };
   }, []);
 
-  return null; // This component doesn't render anything
+  return (
+    <>
+      <PerformanceMonitor sessionId={sessionData.current.sessionId} enabled={collectAdvancedMetrics} />
+    </>
+  );
 };
 
 export default UserAnalytics;
