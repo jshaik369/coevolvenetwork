@@ -17,16 +17,16 @@ interface SEOProps {
 }
 
 const SEO: React.FC<SEOProps> = ({
-  title = 'WRLDS',
-  description = 'WRLDS Technologies: Pioneering smart engineering solutions with textile sensors for sports, safety, and performance monitoring.',
+  title = 'Co-Evolve Network - Global Platform for AI-Augmented Creators',
+  description = 'Connect creators worldwide through accountability partnerships, pitch feedback, and verifiable outcomes in the AI creator economy. Barcelona and Bangalore hubs.',
   type = 'website',
-  name = 'WRLDS Technologies',
-  imageUrl = '/lovable-uploads/48ecf6e2-5a98-4a9d-af6f-ae2265cd4098.png',
+  name = 'Co-Evolve Network',
+  imageUrl = '/lovable-uploads/526dc38a-25fa-40d4-b520-425b23ae0464.png',
   publishDate,
   modifiedDate,
   author,
   category,
-  keywords = ['smart textiles', 'wearable technology', 'textile sensors', 'sports tech', 'safety monitoring', 'performance analytics'],
+  keywords = ['AI creators', 'accountability partnerships', 'creator economy', 'Barcelona', 'Bangalore', 'AI collaboration', 'creator network', 'AI augmented creators', 'global platform'],
   isBlogPost = false
 }) => {
   const location = useLocation();
@@ -71,18 +71,18 @@ const SEO: React.FC<SEOProps> = ({
   const organizationStructuredData = {
     '@context': 'https://schema.org',
     '@type': 'Organization',
-    name: 'WRLDS Technologies',
+    name: 'Co-Evolve Network',
     url: 'https://wrlds.com',
-    logo: 'https://wrlds.com/lovable-uploads/14ea3fe0-19d6-425c-b95b-4117bc41f3ca.png',
-    description: 'Pioneering smart engineering solutions with textile sensors',
+    logo: 'https://wrlds.com/lovable-uploads/483a60b1-7682-4b57-847c-2628c6e6f3ed.png',
+    description: 'Global platform for AI-augmented creators connecting through accountability partnerships',
     contactPoint: {
       '@type': 'ContactPoint',
       contactType: 'customer service',
       email: 'info@wrlds.com'
     },
     sameAs: [
-      'https://www.linkedin.com/company/wrlds-technologies',
-      'https://twitter.com/wrldstechnologies'
+      'https://www.linkedin.com/company/co-evolve-network',
+      'https://twitter.com/coevolvenetwork'
     ]
   };
 
@@ -105,15 +105,15 @@ const SEO: React.FC<SEOProps> = ({
     dateModified: modifiedDate || publishDate,
     author: {
       '@type': 'Organization',
-      name: author || 'WRLDS Technologies',
+      name: author || 'Co-Evolve Network',
       url: 'https://wrlds.com'
     },
     publisher: {
       '@type': 'Organization',
-      name: 'WRLDS Technologies',
+      name: 'Co-Evolve Network',
       logo: {
         '@type': 'ImageObject',
-        url: 'https://wrlds.com/lovable-uploads/14ea3fe0-19d6-425c-b95b-4117bc41f3ca.png',
+        url: 'https://wrlds.com/lovable-uploads/483a60b1-7682-4b57-847c-2628c6e6f3ed.png',
         width: 512,
         height: 512
       },
@@ -211,7 +211,7 @@ const SEO: React.FC<SEOProps> = ({
       <meta property="og:image" content={absoluteImageUrl} />
       <meta property="og:image:width" content="1200" />
       <meta property="og:image:height" content="630" />
-      <meta property="og:site_name" content="WRLDS Technologies" />
+      <meta property="og:site_name" content="Co-Evolve Network" />
       <meta property="og:locale" content="en_US" />
       {isBlogPost && category && <meta property="article:section" content={category} />}
       {isBlogPost && publishDate && <meta property="article:published_time" content={publishDate} />}
@@ -224,8 +224,8 @@ const SEO: React.FC<SEOProps> = ({
       <meta name="twitter:title" content={title} />
       <meta name="twitter:description" content={description} />
       <meta name="twitter:image" content={absoluteImageUrl} />
-      <meta name="twitter:site" content="@wrldstechnologies" />
-      <meta name="twitter:creator" content="@wrldstechnologies" />
+      <meta name="twitter:site" content="@coevolvenetwork" />
+      <meta name="twitter:creator" content="@coevolvenetwork" />
       
       {/* LinkedIn specific */}
       <meta property="og:image:secure_url" content={absoluteImageUrl} />
