@@ -1,94 +1,82 @@
-import { ChevronDown } from "lucide-react";
-import { motion } from "framer-motion";
-import CobeGlobe from '@/components/CobeGlobe';
-import LanguageSwitcher from '@/components/LanguageSwitcher';
-import TypingAnimation from '@/components/TypingAnimation';
-import CreatorCarousel from '@/components/CreatorCarousel';
-import { useLanguage } from '@/hooks/useLanguage';
+import CobeGlobe from './CobeGlobe';
+import { Button } from '@/components/ui/button';
 
 const Hero = () => {
-  const { t } = useLanguage();
-  
-  const scrollToNext = () => {
-    const nextSection = document.getElementById('mission');
-    if (nextSection) {
-      nextSection.scrollIntoView({
-        behavior: 'smooth'
-      });
+  const scrollToContact = () => {
+    const element = document.getElementById('contact');
+    if (element) {
+      element.scrollIntoView({ behavior: 'smooth' });
     }
   };
 
   return (
-    <section className="relative h-screen w-full bg-black overflow-hidden">
-      {/* Language Switcher */}
-      <div className="absolute top-6 right-6 z-20">
-        <LanguageSwitcher />
-      </div>
-      
+    <section className="relative min-h-screen bg-background flex items-center justify-center overflow-hidden">
       {/* Globe Background */}
-      <div className="absolute inset-0 flex items-center justify-center">
-        <div className="w-full h-full max-w-3xl max-h-3xl">
-          <CobeGlobe className="w-full h-full" />
-        </div>
+      <div className="absolute inset-0 flex items-center justify-center opacity-20">
+        <CobeGlobe className="w-full h-full max-w-4xl" />
       </div>
       
-      {/* Overlay Content */}
-      <div className="relative z-10 h-full flex flex-col items-center justify-center text-center px-6">
-        {/* Launch Date Banner */}
-        <motion.div
-          initial={{ opacity: 0, y: -20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6 }}
-          className="mb-4"
-        >
-          <div className="inline-flex items-center px-4 py-2 bg-primary/20 border border-primary/30 rounded-full">
-            <span className="text-primary font-mono text-sm">
-              🇮🇳 August 15, 2025 🇪🇸
-            </span>
-            <span className="ml-2 text-gray-300 text-sm">
-              Independence Day Launch: Bharat → Barcelona → World
-            </span>
-          </div>
-        </motion.div>
+      {/* Content */}
+      <div className="relative z-10 max-w-4xl mx-auto px-6 text-center">
+        {/* Logo */}
+        <div className="mb-8">
+          <img 
+            src="/lovable-uploads/526dc38a-25fa-40d4-b520-425b23ae0464.png" 
+            alt="Co-Evolve Network"
+            className="w-32 h-32 mx-auto mb-6"
+          />
+        </div>
 
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.2 }}
-          className="max-w-5xl"
-        >
-          <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold font-code text-white mb-6 tracking-tight">
-            {t('hero.title')}
-          </h1>
-          <p className="text-lg md:text-xl text-gray-300 max-w-4xl mx-auto font-mono leading-relaxed mb-8">
-            {t('hero.subtitle')}
-          </p>
-          
-          {/* Psychological Hook Typography */}
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 0.8, delay: 0.6 }}
-            className="mb-8"
+        {/* Main Heading */}
+        <h1 className="text-4xl md:text-6xl font-bold text-foreground mb-6 leading-tight">
+          Global Platform for
+          <br />
+          <span className="text-primary">AI-Augmented Creators</span>
+        </h1>
+
+        {/* Subtitle */}
+        <p className="text-xl md:text-2xl text-muted-foreground mb-8 max-w-3xl mx-auto leading-relaxed">
+          Connect creators worldwide through accountability partnerships, 
+          pitch feedback, and verifiable outcomes in the AI creator economy.
+        </p>
+
+        {/* CTA Buttons */}
+        <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
+          <Button 
+            size="lg" 
+            className="text-lg px-8 py-6"
+            onClick={scrollToContact}
           >
-            <TypingAnimation className="text-center" />
-          </motion.div>
+            Join the Network
+          </Button>
+          <Button 
+            variant="outline" 
+            size="lg" 
+            className="text-lg px-8 py-6"
+            onClick={() => {
+              const element = document.getElementById('mission');
+              if (element) element.scrollIntoView({ behavior: 'smooth' });
+            }}
+          >
+            Learn More
+          </Button>
+        </div>
 
-          {/* Featured Creators Carousel */}
-          <CreatorCarousel />
-        </motion.div>
-        
-        {/* Scroll Indicator */}
-        <motion.button
-          onClick={scrollToNext}
-          className="absolute bottom-8 left-1/2 transform -translate-x-1/2 text-white hover:text-green-400 transition-colors"
-          initial={{ opacity: 0, y: -10 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 1 }}
-          whileHover={{ y: 5 }}
-        >
-          <ChevronDown className="w-8 h-8 animate-bounce" />
-        </motion.button>
+        {/* Simple Stats */}
+        <div className="mt-16 grid grid-cols-1 md:grid-cols-3 gap-8 max-w-2xl mx-auto">
+          <div className="text-center">
+            <div className="text-2xl font-bold text-primary">2</div>
+            <div className="text-sm text-muted-foreground">Active Hubs</div>
+          </div>
+          <div className="text-center">
+            <div className="text-2xl font-bold text-primary">Barcelona</div>
+            <div className="text-sm text-muted-foreground">Primary Hub</div>
+          </div>
+          <div className="text-center">
+            <div className="text-2xl font-bold text-primary">Bangalore</div>
+            <div className="text-sm text-muted-foreground">Partner Hub</div>
+          </div>
+        </div>
       </div>
     </section>
   );

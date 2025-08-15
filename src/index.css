@@ -7,35 +7,48 @@
 
 @layer base {
   :root {
-    --background: 0 0% 0%;
-    --foreground: 0 0% 95%;
-
-    --card: 0 0% 5%;
-    --card-foreground: 0 0% 95%;
-
-    --popover: 0 0% 5%;
-    --popover-foreground: 0 0% 95%;
-
-    --primary: 120 100% 40%;
-    --primary-foreground: 0 0% 0%;
-
-    --secondary: 0 0% 15%;
-    --secondary-foreground: 0 0% 95%;
-
-    --muted: 0 0% 95%;
-    --muted-foreground: 0 0% 40%;
-
-    --accent: 0 0% 95%;
-    --accent-foreground: 0 0% 15%;
-
-    --destructive: 0 84.2% 60.2%;
+    --background: 0 0% 100%;
+    --foreground: 0 0% 3.9%;
+    --card: 0 0% 100%;
+    --card-foreground: 0 0% 3.9%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 0 0% 3.9%;
+    --primary: 221 83% 53%;
+    --primary-foreground: 0 0% 98%;
+    --secondary: 210 40% 95%;
+    --secondary-foreground: 0 0% 9%;
+    --muted: 210 40% 98%;
+    --muted-foreground: 215 13% 50%;
+    --accent: 210 40% 95%;
+    --accent-foreground: 0 0% 9%;
+    --destructive: 0 84% 60%;
     --destructive-foreground: 0 0% 98%;
-
-    --border: 0 0% 20%;
-    --input: 0 0% 10%;
-    --ring: 0 0% 50%;
-
+    --border: 214 32% 91%;
+    --input: 214 32% 91%;
+    --ring: 221 83% 53%;
     --radius: 0.5rem;
+  }
+
+  .dark {
+    --background: 0 0% 3.9%;
+    --foreground: 0 0% 98%;
+    --card: 0 0% 3.9%;
+    --card-foreground: 0 0% 98%;
+    --popover: 0 0% 3.9%;
+    --popover-foreground: 0 0% 98%;
+    --primary: 221 83% 53%;
+    --primary-foreground: 0 0% 98%;
+    --secondary: 217 33% 17%;
+    --secondary-foreground: 0 0% 98%;
+    --muted: 217 33% 17%;
+    --muted-foreground: 215 20% 65%;
+    --accent: 217 33% 17%;
+    --accent-foreground: 0 0% 98%;
+    --destructive: 0 63% 31%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 217 33% 17%;
+    --input: 217 33% 17%;
+    --ring: 221 83% 53%;
   }
 }
 
@@ -43,15 +56,9 @@
   * {
     @apply border-border;
   }
-
-  html, body {
-    @apply m-0 p-0 overflow-x-hidden;
-    width: 100%;
-    max-width: 100%;
-  }
-
   body {
-    @apply bg-black text-white font-mono;
+    @apply bg-background text-foreground font-sans antialiased;
+    font-feature-settings: "rlig" 1, "calt" 1;
   }
 }
 
