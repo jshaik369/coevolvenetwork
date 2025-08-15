@@ -21,9 +21,9 @@ const Hero = () => {
         {/* Logo */}
         <div className="mb-8">
           <img 
-            src="/lovable-uploads/526dc38a-25fa-40d4-b520-425b23ae0464.png" 
+            src="/lovable-uploads/483a60b1-7682-4b57-847c-2628c6e6f3ed.png" 
             alt="Co-Evolve Network"
-            className="w-32 h-32 mx-auto mb-6"
+            className="w-32 h-32 mx-auto mb-6 object-contain"
           />
         </div>
 

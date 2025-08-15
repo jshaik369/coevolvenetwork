@@ -35,9 +35,9 @@ const CobeGlobe = ({ className }: CobeGlobeProps) => {
         diffuse: 1.2,
         mapSamples: 16000,
         mapBrightness: 6,
-        baseColor: [0.3, 0.3, 0.3],
-        markerColor: [0.1, 1, 0.5],
-        glowColor: [1, 1, 1],
+        baseColor: [0.1, 0.1, 0.1],
+        markerColor: [0.2, 0.8, 1],
+        glowColor: [0.3, 0.3, 0.3],
         markers: [
           // Primary Hubs (Yellow/Green)
           { location: [41.3851, 2.1734], size: 0.07 }, // Barcelona - Primary Launch Hub
