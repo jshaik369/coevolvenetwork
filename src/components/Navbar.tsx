@@ -5,6 +5,7 @@ import { Menu, X, ChevronDown } from "lucide-react";
 import { motion } from "framer-motion";
 import { Link } from 'react-router-dom';
 import { NavigationMenu, NavigationMenuContent, NavigationMenuItem, NavigationMenuLink, NavigationMenuList, NavigationMenuTrigger, navigationMenuTriggerStyle } from "@/components/ui/navigation-menu";
+import AuthCheck from './AuthCheck';
 
 const Navbar = () => {
   const [isScrolled, setIsScrolled] = useState(false);
@@ -122,6 +123,10 @@ const Navbar = () => {
                   <button onClick={() => scrollToSection('contact')} className={cn("px-4 py-2 rounded-md transition-colors", isScrolled ? "bg-gray-200 text-gray-700 hover:bg-gray-300" : "bg-gray-700 text-white hover:bg-gray-600")}>
                     Contact Us
                   </button>
+                </NavigationMenuItem>
+                
+                <NavigationMenuItem>
+                  <AuthCheck />
                 </NavigationMenuItem>
               </NavigationMenuList>
             </NavigationMenu>
