@@ -1,4 +1,5 @@
 import CobeGlobe from './CobeGlobe';
+import EmailSignup from './EmailSignup';
 import { Button } from '@/components/ui/button';
 
 const Hero = () => {
@@ -12,7 +13,7 @@ const Hero = () => {
   return (
     <section className="relative min-h-screen bg-background flex items-center justify-center overflow-hidden">
       {/* Globe Background */}
-      <div className="absolute inset-0 flex items-center justify-center opacity-20">
+      <div className="absolute inset-0 flex items-center justify-center opacity-30">
         <CobeGlobe className="w-full h-full max-w-4xl" />
       </div>
       
@@ -39,6 +40,11 @@ const Hero = () => {
           Connect creators worldwide through accountability partnerships, 
           pitch feedback, and verifiable outcomes in the AI creator economy.
         </p>
+
+        {/* Email Signup */}
+        <div className="mb-8">
+          <EmailSignup />
+        </div>
 
         {/* CTA Buttons */}
         <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">

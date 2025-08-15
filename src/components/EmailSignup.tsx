@@ -1,80 +1,121 @@
 import React, { useState } from 'react';
+import { motion } from 'framer-motion';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Mail, Terminal, Zap } from 'lucide-react';
-import { toast } from 'sonner';
+import { useToast } from '@/hooks/use-toast';
+import { supabase } from '@/integrations/supabase/client';
 
-const EmailSignup = () => {
+interface EmailSignupProps {
+  className?: string;
+}
+
+const EmailSignup = ({ className }: EmailSignupProps) => {
   const [email, setEmail] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const { toast } = useToast();
+
+  const validateEmail = (email: string): boolean => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!email) return;
+    
+    if (!email) {
+      toast({
+        title: "Email Required",
+        description: "Please enter your email address",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    if (!validateEmail(email)) {
+      toast({
+        title: "Invalid Email",
+        description: "Please enter a valid email address",
+        variant: "destructive",
+      });
+      return;
+    }
 
     setIsLoading(true);
-    
-    // Simulate API call
-    await new Promise(resolve => setTimeout(resolve, 1000));
-    
-    toast.success(`> ACCESS GRANTED: ${email} added to co-evolution network`, {
-      description: "Welcome to the terminal, creator. Your neural pathways are now connected.",
-    });
-    
-    setEmail('');
-    setIsLoading(false);
+
+    try {
+      // Store email in Supabase
+      const { error } = await supabase
+        .from('email_signups')
+        .insert([
+          { 
+            email: email.toLowerCase().trim(),
+            source: 'hero_signup'
+          }
+        ]);
+
+      if (error) {
+        // Handle unique constraint violation (duplicate email)
+        if (error.code === '23505') {
+          toast({
+            title: "Already Registered",
+            description: "This email is already on our early access list!",
+            variant: "default",
+          });
+        } else {
+          throw error;
+        }
+      } else {
+        toast({
+          title: "Success!",
+          description: "You have been added to our early access list. We will notify you when Co-Evolve Network launches!",
+          variant: "default",
+        });
+      }
+
+      setEmail('');
+
+    } catch (error: any) {
+      console.error('Email signup error:', error);
+      toast({
+        title: "Error",
+        description: "Failed to sign up. Please try again later.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
-    <Card className="border-primary/30 bg-card/50 backdrop-blur">
-      <CardHeader>
-        <CardTitle className="flex items-center gap-2 text-primary">
-          <Terminal className="h-5 w-5" />
-          {'>'} INITIALIZE_CONNECTION.exe
-        </CardTitle>
-        <CardDescription className="font-mono text-sm">
-          Enter your neural interface identifier to join the co-evolution matrix
-        </CardDescription>
-      </CardHeader>
-      <CardContent>
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div className="space-y-2">
-            <label className="text-sm font-mono text-muted-foreground">
-              {'>'} EMAIL_ADDRESS:
-            </label>
-            <div className="relative">
-              <Mail className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-              <Input
-                type="email"
-                placeholder="creator@domain.net"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                className="pl-10 font-mono bg-input border-primary/30 focus:border-primary"
-                required
-              />
-            </div>
-          </div>
-          <Button 
-            type="submit" 
-            disabled={isLoading || !email}
-            className="w-full font-mono"
-          >
-            {isLoading ? (
-              <span className="flex items-center gap-2">
-                <span className="animate-spin">⟳</span>
-                CONNECTING...
-              </span>
-            ) : (
-              <span className="flex items-center gap-2">
-                <Zap className="h-4 w-4" />
-                CONNECT_TO_NETWORK
-              </span>
-            )}
-          </Button>
-        </form>
-      </CardContent>
-    </Card>
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.6, delay: 0.3 }}
+      className={`w-full max-w-md mx-auto ${className || ''}`}
+    >
+      <form onSubmit={handleSubmit} className="flex flex-col sm:flex-row gap-3">
+        <Input
+          type="email"
+          placeholder="Enter your email for early access"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          className="flex-1 h-12 text-base bg-card border-border focus:border-primary"
+          disabled={isLoading}
+        />
+        <Button 
+          type="submit" 
+          size="lg"
+          className="h-12 px-6 text-base font-semibold bg-primary hover:bg-primary/90"
+          disabled={isLoading}
+        >
+          {isLoading ? 'Joining...' : 'Join Network'}
+        </Button>
+      </form>
+      
+      <p className="text-xs text-muted-foreground mt-3 text-center">
+        Get notified when we launch. No spam, unsubscribe anytime.
+      </p>
+    </motion.div>
   );
 };
 

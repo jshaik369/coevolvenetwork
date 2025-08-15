@@ -1,5 +1,6 @@
 import { Mail, MapPin, Linkedin } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import StressTestResults from './StressTestResults';
 
 const Contact = () => {
   return (
@@ -58,6 +59,11 @@ const Contact = () => {
           >
             WhatsApp
           </a>
+        </div>
+        
+        {/* Stress Test Results */}
+        <div className="mb-12">
+          <StressTestResults />
         </div>
         
         <div className="flex items-center justify-center gap-2 text-muted-foreground">

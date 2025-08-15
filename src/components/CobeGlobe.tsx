@@ -84,11 +84,11 @@ const CobeGlobe = ({ className }: CobeGlobeProps) => {
           const dayNightCycle = Math.sin(time);
 
           // Dynamic diffusion for day/night effect
-          state.diffuse = 1.2 + dayNightCycle * 0.8;
-          state.mapBrightness = 3 + dayNightCycle * 3;
+          state.diffuse = 1.8 + dayNightCycle * 0.8;
+          state.mapBrightness = 6 + dayNightCycle * 3;
 
-          // Subtle atmospheric glow
-          const atmosphere = 0.8 + Math.sin(time * 1.5) * 0.2;
+          // Enhanced atmospheric glow and outline visibility
+          const atmosphere = 1.0;
           state.opacity = atmosphere;
         }
       });
