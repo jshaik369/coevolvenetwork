@@ -20,11 +20,11 @@ const Hero = () => {
       {/* Content */}
       <div className="relative z-10 max-w-4xl mx-auto px-6 text-center">
         {/* Logo */}
-        <div className="mb-8">
+        <div className="mb-4 md:mb-8">
           <img 
             src="/lovable-uploads/483a60b1-7682-4b57-847c-2628c6e6f3ed.png" 
             alt="Co-Evolve Network"
-            className="w-80 h-80 mx-auto mb-6 object-contain"
+            className="w-32 h-32 md:w-80 md:h-80 mx-auto mb-2 md:mb-6 object-contain"
           />
         </div>
 
