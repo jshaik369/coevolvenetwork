@@ -32,12 +32,15 @@ const CobeGlobe = ({ className }: CobeGlobeProps) => {
         phi: 0,
         theta: 0.3,
         dark: 1,
-        diffuse: 3.0,
-        mapSamples: 16000,
-        mapBrightness: 12,
-        baseColor: [0, 0, 0.2],
+        diffuse: 4.5,
+        mapSamples: 32000,
+        mapBrightness: 18,
+        baseColor: [0.05, 0.1, 0.3],
         markerColor: [0.1, 1, 0.1],
         glowColor: [0.1, 1, 0.1],
+        offset: [0, 0],
+        scale: 1,
+        opacity: 1,
         markers: [
           // Primary Hubs (Yellow/Green)
           { location: [41.3851, 2.1734], size: 0.07 }, // Barcelona - Primary Launch Hub
@@ -85,14 +88,14 @@ const CobeGlobe = ({ className }: CobeGlobeProps) => {
 
           // Heartbeat pulse animation for glow
           const heartbeatPulse = Math.sin(Date.now() * 0.008) * 0.5 + 0.5; // 0 to 1
-          const glowIntensity = 0.7 + heartbeatPulse * 0.8; // 0.7 to 1.5
+          const glowIntensity = 0.8 + heartbeatPulse * 0.6; // 0.8 to 1.4
 
-          // Dynamic diffusion for day/night effect with pulse
-          state.diffuse = (3.0 + dayNightCycle * 0.8) * glowIntensity;
-          state.mapBrightness = (12 + dayNightCycle * 3) * glowIntensity;
+          // Dynamic diffusion for enhanced visibility with pulse
+          state.diffuse = (4.5 + dayNightCycle * 1.2) * glowIntensity;
+          state.mapBrightness = (18 + dayNightCycle * 8) * glowIntensity;
 
           // Enhanced atmospheric glow and outline visibility
-          const atmosphere = 0.8 + heartbeatPulse * 0.4; // 0.8 to 1.2
+          const atmosphere = 0.9 + heartbeatPulse * 0.3; // 0.9 to 1.2
           state.opacity = atmosphere;
         }
       });
