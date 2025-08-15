@@ -155,7 +155,7 @@ const ContactForm = () => {
                       <div className="relative">
                         <Mail className="absolute left-3 top-2.5 h-5 w-5 text-gray-400" />
                         <FormControl>
-                          <Input type="email" placeholder="your.email@example.com" className="pl-10" {...field} />
+                          <Input type="email" placeholder="your.email@coevolvenetwork.com" className="pl-10" {...field} />
                         </FormControl>
                       </div>
                       <FormMessage />
@@ -168,7 +168,7 @@ const ContactForm = () => {
                       <div className="relative">
                         <MessageSquare className="absolute left-3 top-3 h-5 w-5 text-gray-400" />
                         <FormControl>
-                          <Textarea placeholder="Tell us about your project or inquiry..." className="min-h-[120px] pl-10 resize-none" {...field} />
+                          <Textarea placeholder="Tell us about your Co-Evolve Network project or collaboration..." className="min-h-[120px] pl-10 resize-none" {...field} />
                         </FormControl>
                       </div>
                       <FormMessage />

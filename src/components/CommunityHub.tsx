@@ -9,7 +9,7 @@ const CommunityHub = () => {
     {
       icon: Lightbulb,
       title: 'AyurFem Genesis Launch',
-      description: 'Saranda\'s journey from ancient Ayurvedic knowledge to AI-powered maternal care - fully documented proof-of-outcome.',
+      description: 'Saranda\'s journey from ancient Ayurvedic knowledge to AI-powered maternal care - fully documented progress.',
       creator: 'Saranda',
       status: 'Live Product',
       color: 'text-pink-400'

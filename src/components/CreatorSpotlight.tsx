@@ -10,7 +10,7 @@ const CreatorSpotlight = () => {
       project: 'Ayurveda for Antenatal Care',
       status: 'CEN First Genesis Launch Documented',
       description: 'Bridging ancient Ayurvedic wisdom with modern maternal healthcare through AI-powered personalized care protocols.',
-      outcome: 'Successfully launched MVP with documented proof-of-outcome protocol',
+      outcome: 'Successfully launched MVP with documented progress tracking',
       icon: Heart,
       color: 'text-pink-400',
       bgGradient: 'from-pink-500/20 to-red-500/20',
@@ -89,7 +89,7 @@ const CreatorSpotlight = () => {
               </div>
 
               <div className="bg-black/30 p-4 rounded-lg mb-6">
-                <p className="text-sm font-mono text-gray-400 mb-2">Proof-of-Outcome:</p>
+                <p className="text-sm font-mono text-gray-400 mb-2">Outcome:</p>
                 <p className="text-green-400 font-mono text-sm">{creator.outcome}</p>
               </div>
 
@@ -116,7 +116,7 @@ const CreatorSpotlight = () => {
               Join the Creator Economy
             </h3>
             <p className="text-gray-300 font-mono mb-6">
-              Ready to build your sovereign creator journey? Connect with our Barcelona hub and start documenting your proof-of-outcome.
+              Ready to build your creator journey? Connect with our Barcelona hub and start documenting your progress.
             </p>
             <Button
               variant="outline"
