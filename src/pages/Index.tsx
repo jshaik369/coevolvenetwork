@@ -16,7 +16,6 @@ const Index = () => {
         keywords={['AI creators', 'accountability partnerships', 'creator economy', 'Barcelona', 'Bangalore', 'AI collaboration']}
       />
       <UserAnalytics collectAdvancedMetrics={true} />
-      <DataCollectionConsent />
       <Hero />
       <Mission />
       <Contact />

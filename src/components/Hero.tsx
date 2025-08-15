@@ -23,7 +23,7 @@ const Hero = () => {
           <img 
             src="/lovable-uploads/483a60b1-7682-4b57-847c-2628c6e6f3ed.png" 
             alt="Co-Evolve Network"
-            className="w-32 h-32 mx-auto mb-6 object-contain"
+            className="w-40 h-40 mx-auto mb-6 object-contain"
           />
         </div>
 

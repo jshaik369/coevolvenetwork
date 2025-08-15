@@ -34,10 +34,10 @@ const CobeGlobe = ({ className }: CobeGlobeProps) => {
         dark: 0,
         diffuse: 2.5,
         mapSamples: 32000,
-        mapBrightness: 2,
-        baseColor: [0.05, 0.05, 0.05],
-        markerColor: [0.2, 0.8, 1],
-        glowColor: [0.2, 0.2, 0.2],
+        mapBrightness: 4,
+        baseColor: [0.02, 0.02, 0.02],
+        markerColor: [0.3, 0.9, 1],
+        glowColor: [0.1, 0.1, 0.1],
         offset: [0, 0],
         markers: [
           // Primary Hubs (Yellow/Green)
