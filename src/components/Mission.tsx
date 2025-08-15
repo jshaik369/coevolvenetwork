@@ -30,6 +30,39 @@ const Mission = () => {
             <p>
               Our mission combines the entrepreneurial spirit of Indian independence with Catalonia's history of autonomous innovation, creating a blueprint for AI-augmented sovereignty that respects cultural diversity while fostering global collaboration.
             </p>
+
+            {/* Creator Testimonials */}
+            <div className="mt-12 grid md:grid-cols-2 gap-6">
+              <div className="bg-gray-900/30 p-6 rounded-lg border border-gray-800">
+                <p className="text-gray-300 font-mono text-sm mb-4 italic">
+                  "The Co-Evolve Network provided the perfect foundation to transform ancient Ayurvedic knowledge into modern AI-powered maternal care. From idea to live product in 8 weeks."
+                </p>
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 bg-pink-500/20 rounded-full flex items-center justify-center">
+                    <span className="text-pink-400 font-bold text-sm">S</span>
+                  </div>
+                  <div>
+                    <p className="text-white font-semibold text-sm">Saranda</p>
+                    <p className="text-gray-400 text-xs font-mono">Co-founder, AyurFem</p>
+                  </div>
+                </div>
+              </div>
+
+              <div className="bg-gray-900/30 p-6 rounded-lg border border-gray-800">
+                <p className="text-gray-300 font-mono text-sm mb-4 italic">
+                  "Automating my psychology practice workflows felt impossible until I found this community. Now I'm building tools that will scale mental healthcare accessibility."
+                </p>
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 bg-blue-500/20 rounded-full flex items-center justify-center">
+                    <span className="text-blue-400 font-bold text-sm">C</span>
+                  </div>
+                  <div>
+                    <p className="text-white font-semibold text-sm">Carolina</p>
+                    <p className="text-gray-400 text-xs font-mono">Psychology Practitioner</p>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
           
           <motion.div

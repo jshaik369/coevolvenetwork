@@ -7,38 +7,42 @@ import { Link } from 'react-router-dom';
 const Resources = () => {
   const { t } = useLanguage();
 
-  const knowledgeBase = [
+  const creatorToolkit = [
     {
       icon: Book,
-      title: 'AI Adoption Insights',
-      description: 'Real startup experiences and lessons from our community',
+      title: 'AyurFem Launch Documentation',
+      description: 'Complete case study of Saranda\'s 8-week journey from ancient Ayurveda to AI-powered maternal care',
       actionType: 'blog',
-      actionLabel: 'Read Articles',
-      color: 'text-purple-400'
+      actionLabel: 'Read Case Study',
+      color: 'text-pink-400',
+      creator: 'Saranda'
     },
     {
       icon: FileText,
-      title: 'Community Guides',
-      description: 'Practical guides written by experienced founders',
-      actionType: 'coming-soon',
-      actionLabel: 'Coming Soon',
-      color: 'text-blue-400'
+      title: 'Psychology Practice Automation Guide',
+      description: 'Carolina\'s blueprint for automating traditional psychology workflows with AI systems',
+      actionType: 'contact',
+      actionLabel: 'Request Access',
+      color: 'text-blue-400',
+      creator: 'Carolina'
     },
     {
       icon: Layers,
-      title: 'Startup Templates',
-      description: 'Request access to our curated startup resources',
+      title: 'Proof-of-Outcome Templates',
+      description: 'Reusable frameworks for documenting and measuring sovereign creator outcomes',
       actionType: 'contact',
       actionLabel: 'Request Access',
-      color: 'text-green-400'
+      color: 'text-green-400',
+      creator: 'Network'
     },
     {
       icon: AlertTriangle,
-      title: 'Failure Case Studies',
-      description: 'Anonymous case studies from startup failures and pivots',
+      title: 'Creator Journey Pivots',
+      description: 'Real pivot stories and failure documentation from our sovereign creator community',
       actionType: 'contact',
       actionLabel: 'Request Access',
-      color: 'text-red-400'
+      color: 'text-red-400',
+      creator: 'Community'
     }
   ];
 
@@ -68,15 +72,15 @@ const Resources = () => {
           className="text-center mb-16"
         >
           <h2 className="text-3xl md:text-5xl font-bold font-code text-white mb-6 tracking-wide">
-            {t('resources.title')}
+            Creator Success Toolkit
           </h2>
           <p className="text-lg text-gray-300 font-mono max-w-3xl mx-auto">
-            Open-source knowledge, templates, and insights from our community
+            Real resources and case studies from Saranda, Carolina, and our sovereign creator network
           </p>
         </motion.div>
 
         <div className="grid md:grid-cols-2 gap-8">
-          {knowledgeBase.map((resource, index) => (
+          {creatorToolkit.map((resource, index) => (
             <motion.div
               key={index}
               initial={{ opacity: 0, y: 20 }}
@@ -86,7 +90,12 @@ const Resources = () => {
               className="bg-gray-900/50 p-8 rounded-lg border border-gray-700 hover:border-gray-600 transition-all hover:bg-gray-800/50"
             >
               <div className="flex items-start justify-between mb-4">
-                <resource.icon className={`w-10 h-10 ${resource.color}`} />
+                <div className="flex items-center gap-3">
+                  <resource.icon className={`w-10 h-10 ${resource.color}`} />
+                  <div className="text-xs font-mono text-gray-400">
+                    by {resource.creator}
+                  </div>
+                </div>
                 {resource.actionType === 'blog' ? (
                   <Link to="/blog">
                     <Button
@@ -140,10 +149,10 @@ const Resources = () => {
         >
           <div className="bg-black/50 p-6 rounded-lg border border-gray-700 max-w-2xl mx-auto">
             <p className="text-gray-300 font-mono mb-4">
-              Community-driven knowledge base built by real founders
+              Creator Success Toolkit built by Saranda, Carolina, and our sovereign creator community
             </p>
             <p className="text-sm text-gray-400 font-mono">
-              Have insights to share? <a href="mailto:hello@coevolvenetwork.com" className="text-primary hover:text-primary/80">Contact us</a> to contribute
+              Ready to document your journey? <a href="mailto:hello@coevolvenetwork.com" className="text-primary hover:text-primary/80">Join the network</a> and start building
             </p>
           </div>
         </motion.div>

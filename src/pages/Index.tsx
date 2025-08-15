@@ -4,6 +4,8 @@ import Mission from '@/components/Mission';
 import LiveStats from '@/components/LiveStats';
 import BarcelonaHub from '@/components/BarcelonaHub';
 import CommunityHub from '@/components/CommunityHub';
+import CreatorSpotlight from '@/components/CreatorSpotlight';
+import ProofOfOutcome from '@/components/ProofOfOutcome';
 import Resources from '@/components/Resources';
 import PressKit from '@/components/PressKit';
 import EmailSignup from '@/components/EmailSignup';
@@ -35,6 +37,8 @@ const Index = () => {
         />
         <Hero />
         <Mission />
+        <CreatorSpotlight />
+        <ProofOfOutcome />
         <LiveStats />
         <BarcelonaHub />
         <CommunityHub />

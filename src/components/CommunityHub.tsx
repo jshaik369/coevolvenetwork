@@ -5,23 +5,29 @@ import { useLanguage } from '@/hooks/useLanguage';
 const CommunityHub = () => {
   const { t } = useLanguage();
 
-  const features = [
+  const creatorJourneys = [
     {
       icon: Lightbulb,
-      title: t('community.failure'),
-      description: t('community.failureDesc'),
-      color: 'text-red-400'
+      title: 'AyurFem Genesis Launch',
+      description: 'Saranda\'s journey from ancient Ayurvedic knowledge to AI-powered maternal care - fully documented proof-of-outcome.',
+      creator: 'Saranda',
+      status: 'Live Product',
+      color: 'text-pink-400'
     },
     {
       icon: Users,
-      title: t('community.adoption'),
-      description: t('community.adoptionDesc'),
+      title: 'Psychology Practice OS',
+      description: 'Carolina\'s transformation of traditional psychology workflows into scalable AI-automated systems.',
+      creator: 'Carolina', 
+      status: 'In Development',
       color: 'text-blue-400'
     },
     {
       icon: Code,
-      title: t('community.launch'),
-      description: t('community.launchDesc'),
+      title: 'Community Documentation',
+      description: 'Real-time documentation of sovereign creator journeys, failures, pivots, and breakthrough moments.',
+      creator: 'Network',
+      status: 'Ongoing',
       color: 'text-green-400'
     }
   ];
@@ -37,15 +43,15 @@ const CommunityHub = () => {
           className="text-center mb-16"
         >
           <h2 className="text-3xl md:text-5xl font-bold font-code text-white mb-6 tracking-wide">
-            {t('community.title')}
+            Creator Journey Documentation
           </h2>
           <p className="text-lg md:text-xl text-gray-300 font-mono max-w-3xl mx-auto">
-            {t('community.subtitle')}
+            Real stories from sovereign creators building the agent economy
           </p>
         </motion.div>
 
         <div className="grid md:grid-cols-3 gap-8">
-          {features.map((feature, index) => (
+          {creatorJourneys.map((journey, index) => (
             <motion.div
               key={index}
               initial={{ opacity: 0, y: 20 }}
@@ -54,12 +60,29 @@ const CommunityHub = () => {
               viewport={{ once: true }}
               className="bg-black/50 p-8 rounded-lg border border-gray-700 hover:border-gray-600 transition-colors"
             >
-              <feature.icon className={`w-10 h-10 ${feature.color} mb-4`} />
-              <h3 className="text-xl font-bold font-code text-white mb-4">
-                {feature.title}
+              <div className="flex items-start justify-between mb-4">
+                <journey.icon className={`w-10 h-10 ${journey.color}`} />
+                <div className="text-right">
+                  <div className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-mono ${
+                    journey.status === 'Live Product' ? 'bg-green-400/20 text-green-400' :
+                    journey.status === 'In Development' ? 'bg-yellow-400/20 text-yellow-400' :
+                    'bg-blue-400/20 text-blue-400'
+                  }`}>
+                    {journey.status}
+                  </div>
+                </div>
+              </div>
+              
+              <h3 className="text-xl font-bold font-code text-white mb-2">
+                {journey.title}
               </h3>
+              
+              <p className="text-sm font-mono text-gray-400 mb-3">
+                Creator: {journey.creator}
+              </p>
+              
               <p className="text-gray-300 font-mono leading-relaxed">
-                {feature.description}
+                {journey.description}
               </p>
             </motion.div>
           ))}

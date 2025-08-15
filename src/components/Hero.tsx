@@ -3,6 +3,7 @@ import { motion } from "framer-motion";
 import CobeGlobe from '@/components/CobeGlobe';
 import LanguageSwitcher from '@/components/LanguageSwitcher';
 import TypingAnimation from '@/components/TypingAnimation';
+import CreatorCarousel from '@/components/CreatorCarousel';
 import { useLanguage } from '@/hooks/useLanguage';
 
 const Hero = () => {
@@ -72,6 +73,9 @@ const Hero = () => {
           >
             <TypingAnimation className="text-center" />
           </motion.div>
+
+          {/* Featured Creators Carousel */}
+          <CreatorCarousel />
         </motion.div>
         
         {/* Scroll Indicator */}
