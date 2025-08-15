@@ -32,9 +32,9 @@ const CobeGlobe = ({ className }: CobeGlobeProps) => {
         phi: 0,
         theta: 0.3,
         dark: 1,
-        diffuse: 8.0,
+        diffuse: 3.0,
         mapSamples: 32000,
-        mapBrightness: 35,
+        mapBrightness: 47,
         baseColor: [0.05, 0.1, 0.3],
         markerColor: [0.1, 1, 0.1],
         glowColor: [0.1, 1, 0.1],
@@ -86,13 +86,13 @@ const CobeGlobe = ({ className }: CobeGlobeProps) => {
           const time = Date.now() * 0.00005;
           const dayNightCycle = Math.sin(time);
 
-          // Maximum intensity heartbeat pulse animation
+          // Wide-spread flash intensity for extreme neon visibility
           const heartbeatPulse = Math.sin(Date.now() * 0.01) * 0.5 + 0.5; // 0 to 1
-          const flashIntensity = 1.0 + heartbeatPulse * 2.0; // 1.0 to 3.0 - dramatic flash
+          const flashIntensity = 1.0 + heartbeatPulse * 2.0; // 1.0 to 3.0x - wide spread
 
-          // Maximum diffusion and brightness with intense flash
-          state.diffuse = (8.0 + dayNightCycle * 2.0) * flashIntensity;
-          state.mapBrightness = (35 + dayNightCycle * 15) * flashIntensity;
+          // Optimized diffusion and maximum brightness with wide flash range
+          state.diffuse = (3.0 + dayNightCycle * 1.0) * flashIntensity;
+          state.mapBrightness = (47 + dayNightCycle * 15) * flashIntensity;
 
           // Maximum atmospheric glow
           const atmosphere = 1.0;
