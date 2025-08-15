@@ -64,7 +64,7 @@ const Hero = () => {
               if (element) element.scrollIntoView({ behavior: 'smooth' });
             }}
           >
-            About Us
+            Co-Create
           </Button>
         </div>
 
