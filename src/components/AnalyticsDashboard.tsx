@@ -4,7 +4,6 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell, LineChart, Line } from 'recharts';
 import { Globe, Users, Clock, MousePointer, Smartphone, Monitor, Tablet } from 'lucide-react';
 
 interface AnalyticsData {
@@ -192,48 +191,22 @@ const AnalyticsDashboard = () => {
                 <CardDescription>Breakdown by device category</CardDescription>
               </CardHeader>
               <CardContent>
-                <ResponsiveContainer width="100%" height={300}>
-                  <PieChart>
-                    <Pie
-                      data={deviceChartData}
-                      cx="50%"
-                      cy="50%"
-                      labelLine={false}
-                      label={({ device, percentage }) => `${device} ${percentage}%`}
-                      outerRadius={80}
-                      fill="#8884d8"
-                      dataKey="count"
-                    >
-                      {deviceChartData.map((_, index) => (
-                        <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-                      ))}
-                    </Pie>
-                    <Tooltip />
-                  </PieChart>
-                </ResponsiveContainer>
-              </CardContent>
-            </Card>
-
-            <Card>
-              <CardHeader>
-                <CardTitle>Device Distribution</CardTitle>
-                <CardDescription>Detailed device statistics</CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                {deviceChartData.map((item, index) => (
-                  <div key={item.device} className="flex items-center space-x-2">
-                    <div className="flex items-center space-x-2 flex-1">
-                      {item.device === 'mobile' && <Smartphone className="h-4 w-4" />}
-                      {item.device === 'desktop' && <Monitor className="h-4 w-4" />}
-                      {item.device === 'tablet' && <Tablet className="h-4 w-4" />}
-                      <span className="text-sm font-medium capitalize">{item.device}</span>
+                <div className="space-y-4">
+                  {deviceChartData.map((item, index) => (
+                    <div key={item.device} className="flex items-center justify-between">
+                      <div className="flex items-center space-x-2">
+                        {item.device === 'mobile' && <Smartphone className="h-4 w-4" />}
+                        {item.device === 'desktop' && <Monitor className="h-4 w-4" />}
+                        {item.device === 'tablet' && <Tablet className="h-4 w-4" />}
+                        <span className="text-sm font-medium capitalize">{item.device}</span>
+                      </div>
+                      <div className="flex items-center space-x-2">
+                        <Progress value={item.percentage} className="w-16" />
+                        <span className="text-sm text-muted-foreground w-8">{item.count}</span>
+                      </div>
                     </div>
-                    <div className="flex items-center space-x-2">
-                      <Progress value={item.percentage} className="w-16" />
-                      <span className="text-sm text-muted-foreground w-8">{item.count}</span>
-                    </div>
-                  </div>
-                ))}
+                  ))}
+                </div>
               </CardContent>
             </Card>
           </div>
@@ -246,15 +219,14 @@ const AnalyticsDashboard = () => {
               <CardDescription>Visitor distribution by country</CardDescription>
             </CardHeader>
             <CardContent>
-              <ResponsiveContainer width="100%" height={400}>
-                <BarChart data={topCountries}>
-                  <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis dataKey="country" />
-                  <YAxis />
-                  <Tooltip />
-                  <Bar dataKey="visits" fill="hsl(var(--primary))" />
-                </BarChart>
-              </ResponsiveContainer>
+              <div className="space-y-2">
+                {topCountries.map((country, index) => (
+                  <div key={index} className="flex items-center justify-between">
+                    <span className="text-sm">{country.country}</span>
+                    <Badge variant="secondary">{country.visits} visits</Badge>
+                  </div>
+                ))}
+              </div>
             </CardContent>
           </Card>
         </TabsContent>

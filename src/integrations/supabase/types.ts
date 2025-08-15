@@ -83,6 +83,45 @@ export type Database = {
         }
         Relationships: []
       }
+      performance_metrics: {
+        Row: {
+          created_at: string
+          errors: Json | null
+          id: string
+          is_before_unload: boolean | null
+          navigation: Json | null
+          page_load: Json | null
+          resources: Json | null
+          session_id: string
+          timestamp: string
+          vitals: Json | null
+        }
+        Insert: {
+          created_at?: string
+          errors?: Json | null
+          id?: string
+          is_before_unload?: boolean | null
+          navigation?: Json | null
+          page_load?: Json | null
+          resources?: Json | null
+          session_id: string
+          timestamp?: string
+          vitals?: Json | null
+        }
+        Update: {
+          created_at?: string
+          errors?: Json | null
+          id?: string
+          is_before_unload?: boolean | null
+          navigation?: Json | null
+          page_load?: Json | null
+          resources?: Json | null
+          session_id?: string
+          timestamp?: string
+          vitals?: Json | null
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
