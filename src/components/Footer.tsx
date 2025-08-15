@@ -3,7 +3,7 @@ import { ArrowRight, Linkedin } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useState } from "react";
 import { useToast } from "@/hooks/use-toast";
-import emailjs from 'emailjs-com';
+import { supabase } from '@/integrations/supabase/client';
 
 const Footer = () => {
   const [email, setEmail] = useState("");
@@ -25,25 +25,20 @@ const Footer = () => {
     setIsSubmitting(true);
     
     try {
-      // EmailJS configuration
-      const EMAILJS_SERVICE_ID = "service_i3h66xg";
-      const EMAILJS_TEMPLATE_ID = "template_fgq53nh";
-      const EMAILJS_PUBLIC_KEY = "wQmcZvoOqTAhGnRZ3";
+      // Send subscription via secure edge function
+      const response = await supabase.functions.invoke('send-email', {
+        body: {
+          name: "Website Subscriber",
+          email: email,
+          message: `New subscription request from the website footer.`,
+          honeypot: '', // Empty for legitimate requests
+          timestamp: Date.now() - 5000 // Set to pass time check
+        }
+      });
       
-      const templateParams = {
-        from_name: "Website Subscriber",
-        from_email: email,
-        message: `New subscription request from the website footer.`,
-        to_name: 'WRLDS Team',
-        reply_to: email
-      };
-      
-      await emailjs.send(
-        EMAILJS_SERVICE_ID,
-        EMAILJS_TEMPLATE_ID,
-        templateParams,
-        EMAILJS_PUBLIC_KEY
-      );
+      if (response.error) {
+        throw new Error(response.error.message || 'Failed to send subscription');
+      }
       
       toast({
         title: "Success!",
