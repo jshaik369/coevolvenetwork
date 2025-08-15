@@ -31,19 +31,18 @@ const CobeGlobe = ({ className }: CobeGlobeProps) => {
         height: height * 2,
         phi: 0,
         theta: 0.3,
-        dark: 0,
-        diffuse: 2.5,
-        mapSamples: 32000,
-        mapBrightness: 4,
-        baseColor: [0.02, 0.02, 0.02],
-        markerColor: [0.3, 0.9, 1],
-        glowColor: [0.1, 0.1, 0.1],
-        offset: [0, 0],
+        dark: 1,
+        diffuse: 1.2,
+        mapSamples: 16000,
+        mapBrightness: 6,
+        baseColor: [0.3, 0.3, 0.3],
+        markerColor: [0.1, 1, 0.5],
+        glowColor: [1, 1, 1],
         markers: [
           // Primary Hubs (Yellow/Green)
           { location: [41.3851, 2.1734], size: 0.07 }, // Barcelona - Primary Launch Hub
           { location: [12.9716, 77.5946], size: 0.06 }, // Bangalore - Primary Launch Hub
-          
+
           // Established AI Hubs (Yellow markers)
           { location: [37.7749, -122.4194], size: 0.05 }, // San Francisco
           { location: [40.7128, -74.0060], size: 0.05 }, // New York
@@ -56,13 +55,13 @@ const CobeGlobe = ({ className }: CobeGlobeProps) => {
           { location: [39.9042, 116.4074], size: 0.04 }, // Beijing
           { location: [45.5017, -73.5673], size: 0.04 }, // Montreal
           { location: [49.2827, -123.1207], size: 0.04 }, // Vancouver
-          
+
           // Secondary AI Hubs
           { location: [1.3521, 103.8198], size: 0.04 }, // Singapore
           { location: [52.5200, 13.4050], size: 0.04 }, // Berlin
           { location: [19.0760, 72.8777], size: 0.04 }, // Mumbai
           { location: [28.7041, 77.1025], size: 0.04 }, // Delhi
-          
+
           // Emerging AI Hubs (Red markers via markerColor variation)
           { location: [30.2672, -97.7431], size: 0.03 }, // Austin
           { location: [25.2048, 55.2708], size: 0.03 }, // Dubai
@@ -79,35 +78,17 @@ const CobeGlobe = ({ className }: CobeGlobeProps) => {
           // Smooth rotation
           phi += 0.003;
           state.phi = phi;
-          
-          // Forever loop color transitions
-          const time = Date.now() * 0.0001;
-          const colorCycle = Math.sin(time);
-          const colorCycle2 = Math.sin(time * 1.3 + Math.PI / 3);
-          const colorCycle3 = Math.sin(time * 0.7 + Math.PI / 2);
-          
-          // Dynamic base color transitions
-          state.baseColor = [
-            0.05 + colorCycle * 0.1,
-            0.05 + colorCycle2 * 0.1, 
-            0.05 + colorCycle3 * 0.1
-          ];
-          
-          // Dynamic marker color transitions
-          state.markerColor = [
-            0.2 + colorCycle * 0.3,
-            0.8 + colorCycle2 * 0.2,
-            1 + colorCycle3 * 0.0
-          ];
-          
-          // Enhanced map brightness for outline visibility
-          state.mapBrightness = 1.5 + Math.sin(time * 2) * 0.5;
-          
-          // Dynamic diffusion for depth
-          state.diffuse = 2.5 + colorCycle * 0.5;
-          
-          // Atmospheric glow effect
-          const atmosphere = 0.9 + Math.sin(time * 1.5) * 0.1;
+
+          // Enhanced day/night cycle with realistic lighting
+          const time = Date.now() * 0.00005;
+          const dayNightCycle = Math.sin(time);
+
+          // Dynamic diffusion for day/night effect
+          state.diffuse = 1.2 + dayNightCycle * 0.8;
+          state.mapBrightness = 3 + dayNightCycle * 3;
+
+          // Subtle atmospheric glow
+          const atmosphere = 0.8 + Math.sin(time * 1.5) * 0.2;
           state.opacity = atmosphere;
         }
       });
