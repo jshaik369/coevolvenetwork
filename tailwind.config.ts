@@ -63,8 +63,8 @@ export default {
 					border: 'hsl(var(--sidebar-border))',
 					ring: 'hsl(var(--sidebar-ring))'
 				},
-				wrlds: {
-					teal: '#9F9EA1',
+				coevolve: {
+					primary: '#9F9EA1',
 					dark: '#3F3F3F',
 					light: '#F6F6F7',
 					accent: '#C8C8C9',

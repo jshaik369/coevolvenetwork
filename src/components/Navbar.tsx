@@ -79,34 +79,10 @@ const Navbar = () => {
                   <NavigationMenuContent>
                     <ul className="grid gap-3 p-4 w-[400px]">
                       <li>
-                        <Link to="/projects/firecat" className="block p-3 space-y-1 rounded-md hover:bg-gray-100">
-                          <div className="font-medium">FireCat 6th SENSE</div>
-                          <p className="text-sm text-gray-500">Smart textiles for firefighter safety</p>
-                        </Link>
-                      </li>
-                      <li>
-                        <Link to="/projects/sport-retail" className="block p-3 space-y-1 rounded-md hover:bg-gray-100">
-                          <div className="font-medium">Sports Performance</div>
-                          <p className="text-sm text-gray-500">Advanced tracking for athletes</p>
-                        </Link>
-                      </li>
-                      <li>
-                        <Link to="/projects/workwear" className="block p-3 space-y-1 rounded-md hover:bg-gray-100">
-                          <div className="font-medium">Workwear Climate Control</div>
-                          <p className="text-sm text-gray-500">Temperature regulation for extreme environments</p>
-                        </Link>
-                      </li>
-                      <li>
-                        <Link to="/projects/hockey" className="block p-3 space-y-1 rounded-md hover:bg-gray-100">
-                          <div className="font-medium">Ice Hockey Elite Tracker</div>
-                          <p className="text-sm text-gray-500">Performance tracking for ice hockey</p>
-                        </Link>
-                      </li>
-                      <li>
-                        <Link to="/projects/pet-tracker" className="block p-3 space-y-1 rounded-md hover:bg-gray-100">
-                          <div className="font-medium">Pet Activity Counter</div>
-                          <p className="text-sm text-gray-500">Smart collars for pet activity monitoring</p>
-                        </Link>
+                        <div className="block p-3 space-y-1 rounded-md">
+                          <div className="font-medium">Coming Soon</div>
+                          <p className="text-sm text-gray-500">Creator showcase projects launching soon</p>
+                        </div>
                       </li>
                     </ul>
                   </NavigationMenuContent>
@@ -119,30 +95,19 @@ const Navbar = () => {
                   <NavigationMenuContent>
                     <ul className="grid gap-3 p-4 w-[400px]">
                       <li>
-                        <Link to="/tech-details" className="block p-3 space-y-1 rounded-md hover:bg-gray-100">
-                          <div className="font-medium">Technology Details</div>
-                          <p className="text-sm text-gray-500">How our smart textile platform works</p>
-                        </Link>
+                        <div className="block p-3 space-y-1 rounded-md">
+                          <div className="font-medium">Platform Details</div>
+                          <p className="text-sm text-gray-500">How our creator collaboration platform works</p>
+                        </div>
                       </li>
                       <li>
-                        <Link to="/development-process" className="block p-3 space-y-1 rounded-md hover:bg-gray-100">
-                          <div className="font-medium">Development Process</div>
-                          <p className="text-sm text-gray-500">Our approach to creating custom solutions</p>
-                        </Link>
-                      </li>
-                      <li>
-                        
+                        <div className="block p-3 space-y-1 rounded-md">
+                          <div className="font-medium">Creator Process</div>
+                          <p className="text-sm text-gray-500">Our approach to supporting creator partnerships</p>
+                        </div>
                       </li>
                     </ul>
                   </NavigationMenuContent>
-                </NavigationMenuItem>
-                
-                <NavigationMenuItem>
-                  <Link to="/blog">
-                    <NavigationMenuLink className={cn(navigationMenuTriggerStyle(), isScrolled ? "text-gray-700 hover:text-gray-900" : "text-gray-100 hover:text-white bg-transparent hover:bg-gray-800")}>
-                      News
-                    </NavigationMenuLink>
-                  </Link>
                 </NavigationMenuItem>
                 
                 <NavigationMenuItem>
@@ -188,28 +153,15 @@ const Navbar = () => {
             About Us
           </Link>
           
-          {/* Simplified Customer Cases - no dropdown */}
-          <Link to="/projects/firecat" className={cn("block px-3 py-1.5 rounded-md text-sm", isScrolled ? "text-gray-700 hover:bg-gray-50" : "text-gray-200 hover:bg-gray-900")} onClick={() => {
-            setIsMenuOpen(false);
-            window.scrollTo(0, 0);
-          }}>
-            Customer Cases
-          </Link>
+          {/* Simplified Creator Hub */}
+          <div className={cn("block px-3 py-1.5 rounded-md text-sm", isScrolled ? "text-gray-700" : "text-gray-200")}>
+            Creator Hub (Coming Soon)
+          </div>
           
-          {/* Simplified Learn More - no dropdown */}
-          <Link to="/tech-details" className={cn("block px-3 py-1.5 rounded-md text-sm", isScrolled ? "text-gray-700 hover:bg-gray-50" : "text-gray-200 hover:bg-gray-900")} onClick={() => {
-            setIsMenuOpen(false);
-            window.scrollTo(0, 0);
-          }}>
-            Learn More
-          </Link>
-          
-          <Link to="/blog" className={cn("block px-3 py-1.5 rounded-md text-sm", isScrolled ? "text-gray-700 hover:bg-gray-50" : "text-gray-200 hover:bg-gray-900")} onClick={() => {
-            setIsMenuOpen(false);
-            window.scrollTo(0, 0);
-          }}>
-            News
-          </Link>
+          {/* Simplified Platform Info */}
+          <div className={cn("block px-3 py-1.5 rounded-md text-sm", isScrolled ? "text-gray-700" : "text-gray-200")}>
+            Platform Details (Coming Soon)
+          </div>
           
           <Link to="/careers" className={cn("block px-3 py-1.5 rounded-md text-sm", isScrolled ? "text-gray-700 hover:bg-gray-50" : "text-gray-200 hover:bg-gray-900")} onClick={() => {
             setIsMenuOpen(false);

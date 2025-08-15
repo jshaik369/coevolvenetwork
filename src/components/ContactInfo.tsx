@@ -14,7 +14,7 @@ const ContactInfo = () => {
             Contact Us Today
           </h2>
           <p className="text-gray-700 text-lg max-w-2xl mx-auto">
-            Have questions about our AI-powered sensor solutions? Reach out to our team and let's discuss how we can help bring your ideas to life.
+            Ready to join our global creator network? Reach out to our team and let's discuss how we can support your creative collaboration journey.
           </p>
         </div>
 

@@ -37,7 +37,7 @@ const Careers = () => {
                   transition={{ duration: 0.5, delay: 0.2 }} 
                   className="text-xl text-gray-600 mb-4"
                 >
-                  We're looking for passionate innovators to help us revolutionize the smart textile industry.
+                  We're looking for passionate innovators to help us revolutionize the AI-augmented creator collaboration space.
                 </motion.p>
                 
                 <motion.p
@@ -55,20 +55,20 @@ const Careers = () => {
                   transition={{ duration: 0.6 }}
                   className="mb-16"
                 >
-                  <h2 className="text-3xl font-bold mb-6">Why Join WRLDS?</h2>
+                  <h2 className="text-3xl font-bold mb-6">Why Join Co-Evolve Network?</h2>
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
                     {[
                       {
                         title: "Innovation",
-                        description: "Work on cutting-edge technology that's changing multiple industries."
+                        description: "Work on cutting-edge AI-augmented creator collaboration technology."
                       },
                       {
                         title: "Impact",
-                        description: "Create solutions that enhance safety, performance, and quality of life."
+                        description: "Create solutions that empower creators and build meaningful partnerships."
                       },
                       {
                         title: "Growth",
-                        description: "Develop your skills in a rapidly expanding field with diverse challenges."
+                        description: "Develop your skills in the rapidly expanding creator economy ecosystem."
                       }
                     ].map((benefit, i) => (
                       <div key={i} className="bg-gray-50 p-6 rounded-lg border border-gray-100 h-full">
@@ -90,9 +90,9 @@ const Careers = () => {
                         <h3 className="text-xl font-bold text-gray-900">Love Anderberg</h3>
                         <p className="text-gray-600 mb-4">COO</p>
                         <div className="flex flex-col space-y-3">
-                          <a href="mailto:love@wrlds.com" className="flex items-center text-gray-700 hover:text-blue-600">
+                          <a href="mailto:love@coevolve.network" className="flex items-center text-gray-700 hover:text-blue-600">
                             <Mail className="w-5 h-5 mr-2" />
-                            love@wrlds.com
+                            love@coevolve.network
                           </a>
                           <a 
                             href="https://www.linkedin.com/in/love-anderberg-67549a174/" 
