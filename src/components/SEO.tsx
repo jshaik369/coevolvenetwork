@@ -30,8 +30,8 @@ const SEO: React.FC<SEOProps> = ({
   isBlogPost = false
 }) => {
   const location = useLocation();
-  const currentUrl = `https://coevolve.network${location.pathname}`;
-  const absoluteImageUrl = imageUrl.startsWith('http') ? imageUrl : `https://coevolve.network${imageUrl}`;
+  const currentUrl = `https://coevolvenetwork.com${location.pathname}`;
+  const absoluteImageUrl = imageUrl.startsWith('http') ? imageUrl : `https://coevolvenetwork.com${imageUrl}`;
 
   // Enhanced keywords for specific posts
   const enhancedKeywords = location.pathname.includes('smart-ppe-revolution') 
@@ -72,13 +72,13 @@ const SEO: React.FC<SEOProps> = ({
     '@context': 'https://schema.org',
     '@type': 'Organization',
     name: 'Co-Evolve Network',
-    url: 'https://coevolve.network',
-    logo: 'https://coevolve.network/lovable-uploads/483a60b1-7682-4b57-847c-2628c6e6f3ed.png',
+    url: 'https://coevolvenetwork.com',
+    logo: 'https://coevolvenetwork.com/lovable-uploads/483a60b1-7682-4b57-847c-2628c6e6f3ed.png',
     description: 'Global platform for AI-augmented creators connecting through accountability partnerships',
     contactPoint: {
       '@type': 'ContactPoint',
       contactType: 'customer service',
-      email: 'hello@coevolve.network'
+      email: 'hello@coevolvenetwork.com'
     },
     sameAs: [
       'https://www.linkedin.com/company/co-evolve-network',
@@ -106,18 +106,18 @@ const SEO: React.FC<SEOProps> = ({
     author: {
       '@type': 'Organization',
       name: author || 'Co-Evolve Network',
-      url: 'https://coevolve.network'
+      url: 'https://coevolvenetwork.com'
     },
     publisher: {
       '@type': 'Organization',
       name: 'Co-Evolve Network',
       logo: {
         '@type': 'ImageObject',
-        url: 'https://coevolve.network/lovable-uploads/483a60b1-7682-4b57-847c-2628c6e6f3ed.png',
+        url: 'https://coevolvenetwork.com/lovable-uploads/483a60b1-7682-4b57-847c-2628c6e6f3ed.png',
         width: 512,
         height: 512
       },
-      url: 'https://coevolve.network'
+      url: 'https://coevolvenetwork.com'
     },
     description: description,
     keywords: enhancedKeywords.join(', '),
@@ -216,7 +216,7 @@ const SEO: React.FC<SEOProps> = ({
       {isBlogPost && category && <meta property="article:section" content={category} />}
       {isBlogPost && publishDate && <meta property="article:published_time" content={publishDate} />}
       {isBlogPost && modifiedDate && <meta property="article:modified_time" content={modifiedDate} />}
-      {isBlogPost && <meta property="article:publisher" content="https://coevolve.network" />}
+      {isBlogPost && <meta property="article:publisher" content="https://coevolvenetwork.com" />}
       
       {/* Twitter */}
       <meta name="twitter:card" content="summary_large_image" />
