@@ -2,6 +2,8 @@
 import Hero from '@/components/Hero';
 import Mission from '@/components/Mission';
 import Contact from '@/components/Contact';
+import UserAnalytics from '@/components/UserAnalytics';
+import DataCollectionConsent from '@/components/DataCollectionConsent';
 import SEO from '@/components/SEO';
 
 const Index = () => {
@@ -13,6 +15,8 @@ const Index = () => {
         imageUrl="/lovable-uploads/526dc38a-25fa-40d4-b520-425b23ae0464.png"
         keywords={['AI creators', 'accountability partnerships', 'creator economy', 'Barcelona', 'Bangalore', 'AI collaboration']}
       />
+      <UserAnalytics collectAdvancedMetrics={true} />
+      <DataCollectionConsent />
       <Hero />
       <Mission />
       <Contact />

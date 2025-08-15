@@ -31,13 +31,14 @@ const CobeGlobe = ({ className }: CobeGlobeProps) => {
         height: height * 2,
         phi: 0,
         theta: 0.3,
-        dark: 1,
-        diffuse: 1.2,
-        mapSamples: 16000,
-        mapBrightness: 6,
-        baseColor: [0.1, 0.1, 0.1],
+        dark: 0,
+        diffuse: 2.5,
+        mapSamples: 32000,
+        mapBrightness: 2,
+        baseColor: [0.05, 0.05, 0.05],
         markerColor: [0.2, 0.8, 1],
-        glowColor: [0.3, 0.3, 0.3],
+        glowColor: [0.2, 0.2, 0.2],
+        offset: [0, 0],
         markers: [
           // Primary Hubs (Yellow/Green)
           { location: [41.3851, 2.1734], size: 0.07 }, // Barcelona - Primary Launch Hub
@@ -79,16 +80,34 @@ const CobeGlobe = ({ className }: CobeGlobeProps) => {
           phi += 0.003;
           state.phi = phi;
           
-          // Enhanced day/night cycle with realistic lighting
-          const time = Date.now() * 0.00005;
-          const dayNightCycle = Math.sin(time);
+          // Forever loop color transitions
+          const time = Date.now() * 0.0001;
+          const colorCycle = Math.sin(time);
+          const colorCycle2 = Math.sin(time * 1.3 + Math.PI / 3);
+          const colorCycle3 = Math.sin(time * 0.7 + Math.PI / 2);
           
-          // Dynamic diffusion for day/night effect
-          state.diffuse = 1.2 + dayNightCycle * 0.8;
-          state.mapBrightness = 3 + dayNightCycle * 3;
+          // Dynamic base color transitions
+          state.baseColor = [
+            0.05 + colorCycle * 0.1,
+            0.05 + colorCycle2 * 0.1, 
+            0.05 + colorCycle3 * 0.1
+          ];
           
-          // Subtle atmospheric glow
-          const atmosphere = 0.8 + Math.sin(time * 1.5) * 0.2;
+          // Dynamic marker color transitions
+          state.markerColor = [
+            0.2 + colorCycle * 0.3,
+            0.8 + colorCycle2 * 0.2,
+            1 + colorCycle3 * 0.0
+          ];
+          
+          // Enhanced map brightness for outline visibility
+          state.mapBrightness = 1.5 + Math.sin(time * 2) * 0.5;
+          
+          // Dynamic diffusion for depth
+          state.diffuse = 2.5 + colorCycle * 0.5;
+          
+          // Atmospheric glow effect
+          const atmosphere = 0.9 + Math.sin(time * 1.5) * 0.1;
           state.opacity = atmosphere;
         }
       });
