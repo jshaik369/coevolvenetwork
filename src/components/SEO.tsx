@@ -30,8 +30,8 @@ const SEO: React.FC<SEOProps> = ({
   isBlogPost = false
 }) => {
   const location = useLocation();
-  const currentUrl = `https://wrlds.com${location.pathname}`;
-  const absoluteImageUrl = imageUrl.startsWith('http') ? imageUrl : `https://wrlds.com${imageUrl}`;
+  const currentUrl = `https://coevolve.network${location.pathname}`;
+  const absoluteImageUrl = imageUrl.startsWith('http') ? imageUrl : `https://coevolve.network${imageUrl}`;
 
   // Enhanced keywords for specific posts
   const enhancedKeywords = location.pathname.includes('smart-ppe-revolution') 
@@ -72,8 +72,8 @@ const SEO: React.FC<SEOProps> = ({
     '@context': 'https://schema.org',
     '@type': 'Organization',
     name: 'Co-Evolve Network',
-    url: 'https://wrlds.com',
-    logo: 'https://wrlds.com/lovable-uploads/483a60b1-7682-4b57-847c-2628c6e6f3ed.png',
+    url: 'https://coevolve.network',
+    logo: 'https://coevolve.network/lovable-uploads/483a60b1-7682-4b57-847c-2628c6e6f3ed.png',
     description: 'Global platform for AI-augmented creators connecting through accountability partnerships',
     contactPoint: {
       '@type': 'ContactPoint',
@@ -106,18 +106,18 @@ const SEO: React.FC<SEOProps> = ({
     author: {
       '@type': 'Organization',
       name: author || 'Co-Evolve Network',
-      url: 'https://wrlds.com'
+      url: 'https://coevolve.network'
     },
     publisher: {
       '@type': 'Organization',
       name: 'Co-Evolve Network',
       logo: {
         '@type': 'ImageObject',
-        url: 'https://wrlds.com/lovable-uploads/483a60b1-7682-4b57-847c-2628c6e6f3ed.png',
+        url: 'https://coevolve.network/lovable-uploads/483a60b1-7682-4b57-847c-2628c6e6f3ed.png',
         width: 512,
         height: 512
       },
-      url: 'https://wrlds.com'
+      url: 'https://coevolve.network'
     },
     description: description,
     keywords: enhancedKeywords.join(', '),
@@ -216,7 +216,7 @@ const SEO: React.FC<SEOProps> = ({
       {isBlogPost && category && <meta property="article:section" content={category} />}
       {isBlogPost && publishDate && <meta property="article:published_time" content={publishDate} />}
       {isBlogPost && modifiedDate && <meta property="article:modified_time" content={modifiedDate} />}
-      {isBlogPost && <meta property="article:publisher" content="https://wrlds.com" />}
+      {isBlogPost && <meta property="article:publisher" content="https://coevolve.network" />}
       
       {/* Twitter */}
       <meta name="twitter:card" content="summary_large_image" />
