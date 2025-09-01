@@ -55,11 +55,33 @@ const hmacSecret = Deno.env.get('AI_GATEWAY_HMAC_SECRET') || 'development-secret
 
 const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
+// Mapping functions
+const priorityMap = { low: 0, normal: 1, high: 2, urgent: 3 } as const;
+const riskMap = { low: 0, medium: 1, high: 2, critical: 3 } as const;
+
+function mapPriority(p: unknown): number {
+  if (typeof p === 'number') return Math.max(0, Math.min(3, p));
+  if (typeof p === 'string' && p in priorityMap) return priorityMap[p as keyof typeof priorityMap];
+  return 1; // default = normal
+}
+
+function mapRisk(label: keyof typeof riskMap): number {
+  return riskMap[label];
+}
+
+function labelFromPriority(n: number): string {
+  return (Object.keys(priorityMap) as Array<keyof typeof priorityMap>)
+         .find(k => priorityMap[k] === n) ?? 'normal';
+}
+
+type PriorityLabel = 'low' | 'normal' | 'high' | 'urgent';
+type RiskLabel = 'low' | 'medium' | 'high' | 'critical';
+
 interface AICommandRequest {
   command: string;
-  source_ai: 'perplexity' | 'gemini' | 'gpt' | 'claude' | 'other';
+  source_ai: string;
   session_id?: string;
-  priority: 'low' | 'normal' | 'high' | 'urgent';
+  priority?: number | PriorityLabel;
   metadata?: Record<string, any>;
   dry_run?: boolean;
 }
@@ -323,7 +345,7 @@ function detectPromptInjection(text: string): { isInjection: boolean; confidence
   };
 }
 
-async function sanitizeAndValidateCommand(command: string): Promise<{valid: boolean, sanitized: string, risk_level: string, injection_detected?: boolean}> {
+async function sanitizeAndValidateCommand(command: string): Promise<{valid: boolean, sanitized: string, riskLabel: RiskLabel, risk_level_code: number, injection_detected?: boolean}> {
   // Detect prompt injection first
   const injectionResult = detectPromptInjection(command);
   
@@ -331,7 +353,8 @@ async function sanitizeAndValidateCommand(command: string): Promise<{valid: bool
     return {
       valid: false,
       sanitized: '',
-      risk_level: 'critical',
+      riskLabel: 'critical',
+      risk_level_code: mapRisk('critical'),
       injection_detected: true
     };
   }
@@ -344,7 +367,7 @@ async function sanitizeAndValidateCommand(command: string): Promise<{valid: bool
     .substring(0, 500); // Limit length
 
   // Calculate risk level based on content
-  let risk_level = 'low';
+  let riskLabel: RiskLabel = 'low';
   
   const sensitivePatterns = [
     /password|secret|key|token/i,
@@ -360,20 +383,22 @@ async function sanitizeAndValidateCommand(command: string): Promise<{valid: bool
   ];
 
   if (sensitivePatterns.some(pattern => pattern.test(command))) {
-    risk_level = 'medium';
+    riskLabel = 'medium';
   }
   
   if (highRiskPatterns.some(pattern => pattern.test(command))) {
-    risk_level = 'high';
+    riskLabel = 'high';
   }
 
   const valid = sanitized.length > 0 && sanitized.length <= 500;
+  const risk_level_code = mapRisk(riskLabel);
   
-  return { valid, sanitized, risk_level };
+  return { valid, sanitized, riskLabel, risk_level_code, injection_detected: false };
 }
 
 async function logAIInteraction(request: AICommandRequest, response: CommandResponse, metadata: any = {}) {
   try {
+    const priority = mapPriority(request.priority);
     await supabase
       .from('ai_messages')
       .insert({
@@ -382,7 +407,8 @@ async function logAIInteraction(request: AICommandRequest, response: CommandResp
         session_id: request.session_id || 'anonymous',
         role: 'gateway',
         metadata: {
-          priority: request.priority,
+          priority: priority,
+          priority_label: labelFromPriority(priority),
           status: response.status,
           security_level: response.security_status,
           response_data: response.result || {},
@@ -402,7 +428,7 @@ async function logAIInteraction(request: AICommandRequest, response: CommandResp
 
 async function queueCommand(request: AICommandRequest, commandId: string): Promise<CommandResponse> {
   try {
-    const { valid, sanitized, risk_level, injection_detected } = await sanitizeAndValidateCommand(request.command);
+    const { valid, sanitized, riskLabel, risk_level_code, injection_detected } = await sanitizeAndValidateCommand(request.command);
     
     if (!valid || injection_detected) {
       return {
@@ -414,6 +440,8 @@ async function queueCommand(request: AICommandRequest, commandId: string): Promi
       };
     }
 
+    const priority = mapPriority(request.priority);
+
     // Queue the command for processing
     const { error: queueError } = await supabase
       .from('ai_command_queue')
@@ -422,9 +450,13 @@ async function queueCommand(request: AICommandRequest, commandId: string): Promi
         command_text: sanitized,
         source_ai: request.source_ai,
         session_id: request.session_id || 'anonymous',
-        priority: request.priority,
-        risk_level,
-        metadata: request.metadata || {},
+        priority: priority,
+        risk_level: risk_level_code,
+        metadata: {
+          ...request.metadata || {},
+          risk_label: riskLabel,
+          priority_label: labelFromPriority(priority)
+        },
         dry_run: request.dry_run || false,
         status: 'queued'
       });
@@ -434,7 +466,7 @@ async function queueCommand(request: AICommandRequest, commandId: string): Promi
     }
 
     // For high-priority commands, attempt immediate processing
-    if (request.priority === 'urgent' || request.priority === 'high') {
+    if (priority >= 2) {
       try {
         const processResult = await processQueuedCommand(commandId, sanitized, request);
         return {
@@ -454,7 +486,7 @@ async function queueCommand(request: AICommandRequest, commandId: string): Promi
       success: true,
       command_id: commandId,
       status: 'queued',
-      message: `Command queued for processing (risk level: ${risk_level})`,
+      message: `Command queued for processing (risk level: ${riskLabel})`,
       security_status: 'verified'
     };
 
@@ -482,11 +514,14 @@ function normalizeRequestFormat(body: any): AICommandRequest {
     delete body.source;
   }
   
-  // Set defaults
-  body.priority = body.priority || 'normal';
-  body.dry_run = body.dry_run || false;
-  
-  return body as AICommandRequest;
+  return {
+    command: body.command?.trim(),
+    source_ai: body.source_ai,
+    priority: mapPriority(body.priority),
+    session_id: body.session_id,
+    dry_run: body.dry_run ?? false,
+    metadata: body.metadata
+  };
 }
 
 async function processQueuedCommand(commandId: string, command: string, request: AICommandRequest) {
