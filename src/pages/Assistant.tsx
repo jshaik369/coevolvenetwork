@@ -84,9 +84,27 @@ const Assistant = () => {
         }
       });
 
-      if (parseResponse.error) throw new Error('Command parsing failed');
+      if (parseResponse.error) {
+        throw new Error(`Command parsing failed: ${parseResponse.error.message}`);
+      }
 
-      const parsedCommand = JSON.parse(parseResponse.data.response_data.content);
+      const responseContent = parseResponse.data?.response_data?.content || parseResponse.data?.content;
+      if (!responseContent) {
+        throw new Error('No response content from Perplexity');
+      }
+
+      let parsedCommand;
+      try {
+        parsedCommand = JSON.parse(responseContent);
+      } catch (e) {
+        // If JSON parsing fails, extract action from response text
+        const actionMatch = responseContent.match(/action['":\s]*['"]([^'"]+)['"]/i);
+        const action = actionMatch ? actionMatch[1] : 'unknown';
+        parsedCommand = {
+          action: action,
+          parameters: {}
+        };
+      }
       
       let result: CommandResponse = {
         action: parsedCommand.action,
@@ -99,15 +117,21 @@ const Assistant = () => {
       switch (parsedCommand.action) {
         case 'backup_drive':
           const backupResponse = await supabase.functions.invoke('drive-backup', {
-            body: parsedCommand.parameters
+            body: {
+              data_types: parsedCommand.parameters?.data_types || ['all'],
+              include_ai_insights: parsedCommand.parameters?.include_ai_insights !== false,
+              retention_years: parsedCommand.parameters?.retention_years || 7
+            }
           });
           
-          if (backupResponse.error) throw new Error('Backup failed');
+          if (backupResponse.error) {
+            throw new Error(`Backup failed: ${backupResponse.error.message}`);
+          }
           
           result = {
             ...result,
             status: 'success',
-            message: `✅ Backup completed! File size: ${(backupResponse.data.backup_size / 1024).toFixed(1)}KB`,
+            message: `✅ Backup completed! File size: ${Math.round((backupResponse.data?.backup_size || 0) / 1024)}KB`,
             cost_estimate: 0 // Using existing Google Workspace
           };
           break;
@@ -115,17 +139,19 @@ const Assistant = () => {
         case 'analyze_trends':
           const analysisResponse = await supabase.functions.invoke('perplexity-insights', {
             body: {
-              query: `Analyze business trends for CoEvolve Network based on recent data. Focus on: ${parsedCommand.parameters.focus_area || 'general trends'}. Timeframe: ${parsedCommand.parameters.timeframe || 'last 30 days'}`,
+              query: `Analyze business trends for CoEvolve Network based on recent data. Focus on: ${parsedCommand.parameters?.focus_area || 'general trends'}. Timeframe: ${parsedCommand.parameters?.timeframe || 'last 30 days'}`,
               insight_type: 'business_analysis'
             }
           });
           
-          if (analysisResponse.error) throw new Error('Analysis failed');
+          if (analysisResponse.error) {
+            throw new Error(`Analysis failed: ${analysisResponse.error.message}`);
+          }
           
           result = {
             ...result,
             status: 'success',
-            message: `📊 Analysis complete: ${analysisResponse.data.response_data.content.slice(0, 100)}...`,
+            message: `📊 Analysis complete: ${(analysisResponse.data?.response_data?.content || analysisResponse.data?.content || '').slice(0, 100)}...`,
             cost_estimate: 0.02 // Perplexity API cost
           };
           break;
@@ -170,6 +196,26 @@ const Assistant = () => {
           };
           break;
 
+        case 'run_automation':
+          const automationResponse = await supabase.functions.invoke('automation-orchestrator', {
+            body: {
+              action: 'run_job',
+              jobId: parsedCommand.parameters?.job_id || parsedCommand.parameters?.jobId
+            }
+          });
+          
+          if (automationResponse.error) {
+            throw new Error(`Automation failed: ${automationResponse.error.message}`);
+          }
+          
+          result = {
+            ...result,
+            status: 'success',
+            message: `⚡ Automation job started successfully`,
+            cost_estimate: 0
+          };
+          break;
+
         default:
           throw new Error(`Unknown action: ${parsedCommand.action}`);
       }
@@ -181,19 +227,21 @@ const Assistant = () => {
         description: result.message
       });
 
-    } catch (error) {
+    } catch (error: any) {
+      console.error('Command processing error:', error);
+      
       const errorResponse: CommandResponse = {
         action: 'error',
         parameters: {},
         status: 'error',
-        message: `❌ Error: ${error.message}`
+        message: `❌ Error: ${error?.message || 'Unknown error occurred'}`
       };
       
       setResponses(prev => [errorResponse, ...prev]);
       
       toast({
         title: "Command failed",
-        description: error.message,
+        description: error?.message || 'Unknown error occurred',
         variant: "destructive"
       });
     }
