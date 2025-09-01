@@ -14,6 +14,7 @@ import Auth from "./pages/Auth";
 import AutomationDashboard from "./pages/AutomationDashboard";
 import Assistant from "./pages/Assistant";
 import ProtectedRoute from "./components/ProtectedRoute";
+import AdminRoute from "./components/AdminRoute";
 
 const App = () => {
   const [queryClient] = useState(() => new QueryClient());
@@ -30,14 +31,14 @@ const App = () => {
             <Route path="/careers" element={<Careers />} />
             <Route path="/privacy-policy" element={<PrivacyPolicy />} />
             <Route path="/analytics" element={
-              <ProtectedRoute>
+              <AdminRoute>
                 <Analytics />
-              </ProtectedRoute>
+              </AdminRoute>
             } />
             <Route path="/automation" element={
-              <ProtectedRoute>
+              <AdminRoute>
                 <AutomationDashboard />
-              </ProtectedRoute>
+              </AdminRoute>
             } />
             <Route path="/assistant" element={
               <ProtectedRoute>
