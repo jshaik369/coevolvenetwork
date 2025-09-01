@@ -101,6 +101,57 @@ export type Database = {
         }
         Relationships: []
       }
+      audit_ledger: {
+        Row: {
+          created_at: string
+          hash: string
+          id: string
+          merkle_root: string | null
+          metadata: Json | null
+          new_values: Json | null
+          old_values: Json | null
+          operation: string
+          previous_hash: string | null
+          record_id: string | null
+          sequence_number: number
+          table_name: string
+          timestamp: string
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          hash: string
+          id?: string
+          merkle_root?: string | null
+          metadata?: Json | null
+          new_values?: Json | null
+          old_values?: Json | null
+          operation: string
+          previous_hash?: string | null
+          record_id?: string | null
+          sequence_number?: number
+          table_name: string
+          timestamp?: string
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          hash?: string
+          id?: string
+          merkle_root?: string | null
+          metadata?: Json | null
+          new_values?: Json | null
+          old_values?: Json | null
+          operation?: string
+          previous_hash?: string | null
+          record_id?: string | null
+          sequence_number?: number
+          table_name?: string
+          timestamp?: string
+          user_id?: string | null
+        }
+        Relationships: []
+      }
       automation_jobs: {
         Row: {
           config: Json
@@ -426,6 +477,20 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      generate_audit_hash: {
+        Args: {
+          _new_values: Json
+          _old_values: Json
+          _operation: string
+          _previous_hash: string
+          _record_id: string
+          _sequence_number: number
+          _table_name: string
+          _timestamp: string
+          _user_id: string
+        }
+        Returns: string
+      }
       has_any_role: {
         Args: { _roles: Database["public"]["Enums"]["app_role"][] }
         Returns: boolean
@@ -440,6 +505,17 @@ export type Database = {
       initialize_first_admin: {
         Args: { _user_id: string }
         Returns: boolean
+      }
+      insert_audit_log: {
+        Args: {
+          _metadata?: Json
+          _new_values?: Json
+          _old_values?: Json
+          _operation: string
+          _record_id: string
+          _table_name: string
+        }
+        Returns: undefined
       }
       is_admin: {
         Args: Record<PropertyKey, never>
