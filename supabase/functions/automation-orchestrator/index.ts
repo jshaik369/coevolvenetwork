@@ -100,6 +100,10 @@ async function executeJob(job: AutomationJob, executionId: string): Promise<any>
         result = await executeLeadScoringJob(job, executionId);
         break;
         
+      case 'drive_backup':
+        result = await executeDriveBackupJob(job, executionId);
+        break;
+        
       default:
         throw new Error(`Unknown job type: ${job.job_type}`);
     }
@@ -279,6 +283,43 @@ async function executeLeadScoringJob(job: AutomationJob, executionId: string) {
     gmail_processing: gmailResult,
     generated_at: new Date().toISOString()
   };
+}
+
+async function executeDriveBackupJob(job: AutomationJob, executionId: string) {
+  console.log(`Executing Drive backup job: ${job.name}`);
+  
+  try {
+    const config = job.config || {};
+    const backupParams = {
+      data_types: config.data_types || ['all'],
+      include_ai_insights: config.include_ai_insights !== false,
+      retention_years: config.retention_years || 7
+    };
+
+    const response = await fetch(`${supabaseUrl}/functions/v1/drive-backup`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${supabaseServiceKey}`,
+      },
+      body: JSON.stringify(backupParams)
+    });
+
+    if (!response.ok) {
+      throw new Error(`Drive backup failed: ${response.status}`);
+    }
+
+    const result = await response.json();
+
+    return { 
+      success: true, 
+      message: `Drive backup completed successfully. File ID: ${result.drive_file_id}`,
+      data: result
+    };
+  } catch (error) {
+    console.error('Drive backup job error:', error);
+    throw error;
+  }
 }
 
 function calculateNextRun(cronExpression: string | null): string | null {

@@ -3,5 +3,23 @@ project_id = "joovupvjegfnjgkyxekf"
 [functions.analytics]
 verify_jwt = false
 
+[functions.performance-metrics]
+verify_jwt = false
+
 [functions.send-email]
 verify_jwt = false
+
+[functions.perplexity-insights]
+verify_jwt = true
+
+[functions.gmail-processor]
+verify_jwt = true
+
+[functions.automation-orchestrator]
+verify_jwt = true
+
+[functions.setup-initial-jobs]
+verify_jwt = true
+
+[functions.drive-backup]
+verify_jwt = true

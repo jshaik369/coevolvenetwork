@@ -96,6 +96,19 @@ const initialJobs = [
       includeCustomerData: true,
       timeframe: 'weekly'
     }
+  },
+  {
+    name: 'Daily Drive Backup',
+    description: 'Automated daily backup to Google Drive with Vault retention',
+    job_type: 'drive_backup',
+    schedule_cron: '0 2 * * *', // Daily at 2 AM
+    is_enabled: false,
+    dry_run_enabled: true,
+    config: {
+      data_types: ['analytics', 'automation', 'ai_insights'],
+      include_ai_insights: true,
+      retention_years: 7
+    }
   }
 ];
 
