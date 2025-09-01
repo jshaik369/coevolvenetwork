@@ -25,7 +25,8 @@ const Assistant = () => {
     { icon: Archive, label: 'Backup to Drive', command: 'backup everything to google drive now' },
     { icon: Brain, label: 'AI Analysis', command: 'analyze recent business trends' },
     { icon: Database, label: 'Check Status', command: 'show me system status' },
-    { icon: Shield, label: 'Privacy Check', command: 'review privacy compliance' }
+    { icon: Shield, label: 'Privacy Check', command: 'review privacy compliance' },
+    { icon: Settings, label: 'Operator Guide', command: 'show me the AI operator guide', action: () => window.open('/operator-guide', '_blank') }
   ]);
 
   const { toast } = useToast();
@@ -256,9 +257,13 @@ const Assistant = () => {
     }
   };
 
-  const handleQuickAction = (command: string) => {
-    setInput(command);
-    processCommand(command);
+  const handleQuickAction = (command: string, action?: () => void) => {
+    if (action) {
+      action();
+    } else {
+      setInput(command);
+      processCommand(command);
+    }
   };
 
   return (
@@ -270,7 +275,14 @@ const Assistant = () => {
             <h1 className="text-3xl font-bold mb-2 bg-gradient-to-r from-primary to-primary/70 bg-clip-text text-transparent">
               CoEvolve Assistant
             </h1>
-            <p className="text-muted-foreground">Natural language control for your iPhone</p>
+            <p className="text-muted-foreground">CIA-Level automation with natural language control</p>
+            <div className="mt-2 text-xs text-muted-foreground">
+              Your AI assistants can now communicate with this platform. Visit the{' '}
+              <a href="/operator-guide" target="_blank" className="text-primary hover:underline">
+                Operator Guide
+              </a>{' '}
+              for integration instructions.
+            </div>
           </div>
 
           {/* Quick Actions */}
@@ -281,7 +293,7 @@ const Assistant = () => {
                 variant="outline"
                 size="lg"
                 className="h-20 flex flex-col gap-2 text-left"
-                onClick={() => handleQuickAction(action.command)}
+                onClick={() => handleQuickAction(action.command, action.action)}
                 disabled={isProcessing}
               >
                 <action.icon className="h-5 w-5" />

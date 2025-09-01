@@ -46,11 +46,7 @@ const App = () => {
                 <Assistant />
               </ProtectedRoute>
             } />
-            <Route path="/operator-guide" element={
-              <AdminRoute>
-                <OperatorGuide />
-              </AdminRoute>
-            } />
+            <Route path="/operator-guide" element={<OperatorGuide />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </BrowserRouter>
