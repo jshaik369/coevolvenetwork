@@ -1,10 +1,17 @@
+
 import "https://deno.land/x/xhr@0.1.0/mod.ts";
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
 const corsHeaders = {
-  'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type, x-signature, x-timestamp',
+  'Access-Control-Allow-Origin': 'https://joovupvjegfnjgkyxekf.supabase.co',
+  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type, x-signature, x-timestamp, x-nonce',
+  'Access-Control-Allow-Methods': 'POST, OPTIONS',
+  'X-Content-Type-Options': 'nosniff',
+  'X-Frame-Options': 'DENY',
+  'X-XSS-Protection': '1; mode=block',
+  'Strict-Transport-Security': 'max-age=31536000; includeSubDomains',
+  'Content-Security-Policy': "default-src 'none'; script-src 'none'; object-src 'none';",
 };
 
 const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
@@ -31,22 +38,176 @@ interface CommandResponse {
   security_status: 'verified' | 'warning' | 'blocked';
 }
 
-// CIA-Level Security Functions
-async function verifyHMACSignature(body: string, signature: string, timestamp: string): Promise<boolean> {
+interface CircuitBreaker {
+  failureCount: number;
+  lastFailureTime: number;
+  state: 'closed' | 'open' | 'half-open';
+}
+
+const circuitBreaker: CircuitBreaker = {
+  failureCount: 0,
+  lastFailureTime: 0,
+  state: 'closed'
+};
+
+const CIRCUIT_BREAKER_THRESHOLD = 50;
+const CIRCUIT_BREAKER_TIMEOUT = 60000; // 1 minute
+const RATE_LIMIT_WINDOW = 60000; // 1 minute
+const RATE_LIMIT_MAX_REQUESTS = 100;
+const TIMESTAMP_MAX_AGE = 30000; // 30 seconds
+
+async function logSecurityEvent(eventType: string, severity: 'info' | 'warning' | 'error' | 'critical', message: string, context: any = {}, ip?: string, userAgent?: string) {
+  try {
+    await supabase
+      .from('security_events')
+      .insert({
+        event_type: eventType,
+        severity,
+        message,
+        context,
+        ip,
+        user_agent: userAgent
+      });
+  } catch (error) {
+    console.error('Failed to log security event:', error);
+  }
+}
+
+async function checkCircuitBreaker(): Promise<boolean> {
+  const now = Date.now();
+  
+  if (circuitBreaker.state === 'open') {
+    if (now - circuitBreaker.lastFailureTime > CIRCUIT_BREAKER_TIMEOUT) {
+      circuitBreaker.state = 'half-open';
+      circuitBreaker.failureCount = 0;
+    } else {
+      return false; // Circuit is open, reject request
+    }
+  }
+  
+  return true;
+}
+
+function recordCircuitBreakerSuccess() {
+  circuitBreaker.failureCount = 0;
+  circuitBreaker.state = 'closed';
+}
+
+function recordCircuitBreakerFailure() {
+  circuitBreaker.failureCount++;
+  circuitBreaker.lastFailureTime = Date.now();
+  
+  if (circuitBreaker.failureCount >= CIRCUIT_BREAKER_THRESHOLD) {
+    circuitBreaker.state = 'open';
+  }
+}
+
+async function checkRateLimit(ip: string): Promise<{ allowed: boolean; requestCount: number }> {
+  const now = new Date();
+  const windowStart = new Date(Math.floor(now.getTime() / RATE_LIMIT_WINDOW) * RATE_LIMIT_WINDOW);
+  
+  try {
+    // Get or create rate limit record for this IP and window
+    const { data: existing, error: selectError } = await supabase
+      .from('api_rate_limits')
+      .select('*')
+      .eq('ip', ip)
+      .eq('window_start', windowStart.toISOString())
+      .single();
+    
+    if (selectError && selectError.code !== 'PGRST116') {
+      throw selectError;
+    }
+    
+    if (existing) {
+      // Update existing record
+      const newCount = existing.request_count + 1;
+      
+      await supabase
+        .from('api_rate_limits')
+        .update({
+          request_count: newCount,
+          last_request_at: now.toISOString()
+        })
+        .eq('id', existing.id);
+      
+      return {
+        allowed: newCount <= RATE_LIMIT_MAX_REQUESTS,
+        requestCount: newCount
+      };
+    } else {
+      // Create new record
+      await supabase
+        .from('api_rate_limits')
+        .insert({
+          ip,
+          window_start: windowStart.toISOString(),
+          request_count: 1,
+          last_request_at: now.toISOString()
+        });
+      
+      return { allowed: true, requestCount: 1 };
+    }
+  } catch (error) {
+    console.error('Rate limiting error:', error);
+    // Fail open for availability, but log the issue
+    return { allowed: true, requestCount: 0 };
+  }
+}
+
+async function checkAndStoreNonce(nonce: string, signature: string, timestamp: string, ip: string, userAgent: string): Promise<boolean> {
+  try {
+    // Check if nonce already exists
+    const { data: existing } = await supabase
+      .from('ai_request_nonces')
+      .select('nonce')
+      .eq('nonce', nonce)
+      .single();
+    
+    if (existing) {
+      await logSecurityEvent('replay_attack_detected', 'critical', 'Duplicate nonce detected - potential replay attack', { nonce, ip }, ip, userAgent);
+      return false; // Nonce already used
+    }
+    
+    // Store the nonce
+    const { error } = await supabase
+      .from('ai_request_nonces')
+      .insert({
+        nonce,
+        signature,
+        request_timestamp: parseInt(timestamp),
+        ip,
+        user_agent: userAgent,
+        used_at: new Date().toISOString()
+      });
+    
+    if (error) {
+      console.error('Failed to store nonce:', error);
+      return false;
+    }
+    
+    return true;
+  } catch (error) {
+    console.error('Nonce checking error:', error);
+    return false;
+  }
+}
+
+async function verifyHMACSignature(body: string, signature: string, timestamp: string, nonce?: string): Promise<boolean> {
   try {
     // Check timestamp freshness (prevent replay attacks)
     const requestTime = parseInt(timestamp);
     const currentTime = Date.now();
     const timeDiff = Math.abs(currentTime - requestTime);
     
-    // Reject requests older than 5 minutes
-    if (timeDiff > 5 * 60 * 1000) {
+    // Reject requests older than 30 seconds
+    if (timeDiff > TIMESTAMP_MAX_AGE) {
       console.warn('Request timestamp too old:', timeDiff);
       return false;
     }
 
-    // Create expected signature
-    const payload = timestamp + body;
+    // Create expected signature with nonce if provided
+    const payload = nonce ? `${timestamp}${nonce}${body}` : `${timestamp}${body}`;
     const key = await crypto.subtle.importKey(
       'raw',
       new TextEncoder().encode(hmacSecret),
@@ -60,14 +221,80 @@ async function verifyHMACSignature(body: string, signature: string, timestamp: s
       .map(b => b.toString(16).padStart(2, '0'))
       .join('');
     
-    return signature === expectedHex;
+    // Use constant-time comparison to prevent timing attacks
+    if (signature.length !== expectedHex.length) {
+      return false;
+    }
+    
+    let result = 0;
+    for (let i = 0; i < signature.length; i++) {
+      result |= signature.charCodeAt(i) ^ expectedHex.charCodeAt(i);
+    }
+    
+    return result === 0;
   } catch (error) {
     console.error('HMAC verification error:', error);
     return false;
   }
 }
 
-async function sanitizeAndValidateCommand(command: string): Promise<{valid: boolean, sanitized: string, risk_level: string}> {
+function detectPromptInjection(text: string): { isInjection: boolean; confidence: number; patterns: string[] } {
+  const injectionPatterns = [
+    // Direct instruction overrides
+    /(?:ignore|forget|disregard).*(?:previous|above|prior).*(?:instruction|prompt|command)/i,
+    /(?:system|admin|root).*(?:override|bypass|disable)/i,
+    /(?:execute|run|eval|call).*(?:code|script|function|command)/i,
+    
+    // Common injection markers
+    /(?:\/\*|\*\/|<!--|\-\->|#|\/\/)/,
+    /(?:\$\{|\{\{|\}\}|\$\(|\))/,
+    
+    // Dangerous commands
+    /(?:rm\s+\-rf|del\s+\/|format\s+c:|shutdown|reboot)/i,
+    /(?:drop\s+table|delete\s+from|truncate|alter\s+table)/i,
+    
+    // Encoding attempts
+    /(?:%[0-9a-f]{2}|\\x[0-9a-f]{2}|\\u[0-9a-f]{4}){3,}/i,
+    
+    // Role manipulation
+    /(?:you\s+are\s+now|from\s+now\s+on|new\s+role|act\s+as)/i,
+  ];
+  
+  const foundPatterns: string[] = [];
+  let confidence = 0;
+  
+  for (const pattern of injectionPatterns) {
+    if (pattern.test(text)) {
+      foundPatterns.push(pattern.source);
+      confidence += 0.3;
+    }
+  }
+  
+  // Additional heuristics
+  if (text.length > 1000) confidence += 0.1;
+  if (/[<>\"'`]/g.test(text)) confidence += 0.1;
+  if (/\b(?:eval|exec|system|shell)\b/i.test(text)) confidence += 0.4;
+  
+  return {
+    isInjection: confidence > 0.5,
+    confidence: Math.min(confidence, 1.0),
+    patterns: foundPatterns
+  };
+}
+
+async function sanitizeAndValidateCommand(command: string): Promise<{valid: boolean, sanitized: string, risk_level: string, injection_detected?: boolean}> {
+  // Detect prompt injection first
+  const injectionResult = detectPromptInjection(command);
+  
+  if (injectionResult.isInjection) {
+    return {
+      valid: false,
+      sanitized: '',
+      risk_level: 'critical',
+      injection_detected: true
+    };
+  }
+  
   // Remove potentially dangerous characters
   const sanitized = command
     .replace(/[<>\"'`;]/g, '') // Remove XSS-prone characters
@@ -109,18 +336,23 @@ async function logAIInteraction(request: AICommandRequest, response: CommandResp
     await supabase
       .from('ai_messages')
       .insert({
-        command_text: request.command,
-        source_ai: request.source_ai,
+        message: request.command,
+        source: request.source_ai,
         session_id: request.session_id || 'anonymous',
-        priority: request.priority,
-        status: response.status,
-        security_level: response.security_status,
-        response_data: response.result || {},
-        execution_metadata: {
-          ...metadata,
-          timestamp: new Date().toISOString(),
-          hmac_verified: response.security_status === 'verified'
-        }
+        role: 'gateway',
+        metadata: {
+          priority: request.priority,
+          status: response.status,
+          security_level: response.security_status,
+          response_data: response.result || {},
+          execution_metadata: {
+            ...metadata,
+            timestamp: new Date().toISOString(),
+            hmac_verified: response.security_status === 'verified'
+          }
+        },
+        security_status: response.security_status,
+        status: response.status
       });
   } catch (error) {
     console.error('Failed to log AI interaction:', error);
@@ -129,14 +361,14 @@ async function logAIInteraction(request: AICommandRequest, response: CommandResp
 
 async function queueCommand(request: AICommandRequest, commandId: string): Promise<CommandResponse> {
   try {
-    const { valid, sanitized, risk_level } = await sanitizeAndValidateCommand(request.command);
+    const { valid, sanitized, risk_level, injection_detected } = await sanitizeAndValidateCommand(request.command);
     
-    if (!valid) {
+    if (!valid || injection_detected) {
       return {
         success: false,
         command_id: commandId,
         status: 'failed',
-        message: 'Invalid command format or content blocked by security filters',
+        message: injection_detected ? 'Command blocked: Prompt injection detected' : 'Invalid command format or content blocked by security filters',
         security_status: 'blocked'
       };
     }
@@ -197,17 +429,14 @@ async function queueCommand(request: AICommandRequest, commandId: string): Promi
   }
 }
 
-// Normalize different input formats to our standard format
 function normalizeRequestFormat(body: any): AICommandRequest {
   // Handle different input formats
   if (body.action && !body.command) {
-    // Convert action-style to command-style
     body.command = body.action;
     delete body.action;
   }
   
   if (body.source && !body.source_ai) {
-    // Convert source to source_ai
     body.source_ai = body.source;
     delete body.source;
   }
@@ -220,9 +449,7 @@ function normalizeRequestFormat(body: any): AICommandRequest {
 }
 
 async function processQueuedCommand(commandId: string, command: string, request: AICommandRequest) {
-  // Parse the natural language command and route to appropriate automation
   try {
-    // Use our existing orchestrator to handle the command
     const response = await fetch(`${supabaseUrl}/functions/v1/automation-orchestrator`, {
       method: 'POST',
       headers: {
@@ -257,23 +484,52 @@ serve(async (req) => {
 
   const startTime = Date.now();
   const commandId = crypto.randomUUID();
+  const ip = req.headers.get('x-forwarded-for') || 'unknown';
+  const userAgent = req.headers.get('user-agent') || 'unknown';
 
   try {
-    console.log('AI Command Gateway called');
+    console.log('AI Command Gateway called', { ip, userAgent, commandId });
+
+    // Circuit breaker check
+    if (!await checkCircuitBreaker()) {
+      await logSecurityEvent('circuit_breaker_open', 'warning', 'Request rejected - circuit breaker is open', {}, ip, userAgent);
+      return new Response(
+        JSON.stringify({ 
+          error: 'Service temporarily unavailable - circuit breaker is open',
+          security_status: 'blocked',
+          command_id: commandId
+        }),
+        { status: 503, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
+    // Rate limiting check
+    const rateLimitResult = await checkRateLimit(ip);
+    if (!rateLimitResult.allowed) {
+      await logSecurityEvent('rate_limit_exceeded', 'warning', `Rate limit exceeded for IP ${ip}`, { requestCount: rateLimitResult.requestCount }, ip, userAgent);
+      return new Response(
+        JSON.stringify({ 
+          error: `Rate limit exceeded. Maximum ${RATE_LIMIT_MAX_REQUESTS} requests per minute.`,
+          security_status: 'blocked',
+          command_id: commandId
+        }),
+        { status: 429, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
 
     // Extract headers for security verification
     const signature = req.headers.get('x-signature');
     const timestamp = req.headers.get('x-timestamp');
+    const nonce = req.headers.get('x-nonce');
     
     const rawBody = await req.text();
     let requestBody: AICommandRequest;
     
     try {
       requestBody = JSON.parse(rawBody);
-      
-      // Transform different input formats to standard format
       requestBody = normalizeRequestFormat(requestBody);
     } catch {
+      await logSecurityEvent('invalid_json', 'warning', 'Invalid JSON in request body', {}, ip, userAgent);
       return new Response(
         JSON.stringify({ 
           error: 'Invalid JSON in request body. Expected format: {"command": "your command", "source_ai": "your_ai"}',
@@ -288,16 +544,31 @@ serve(async (req) => {
       );
     }
 
-    // CIA-Level Security: HMAC Signature Verification
+    // HMAC Signature Verification with timing-safe comparison
     let securityStatus: 'verified' | 'warning' | 'blocked' = 'warning';
     
     if (signature && timestamp) {
-      const isValidSignature = await verifyHMACSignature(rawBody, signature, timestamp);
+      // Check and store nonce if provided
+      if (nonce) {
+        const nonceValid = await checkAndStoreNonce(nonce, signature, timestamp, ip, userAgent);
+        if (!nonceValid) {
+          return new Response(
+            JSON.stringify({ 
+              error: 'Invalid nonce - request blocked by security policy',
+              security_status: 'blocked',
+              command_id: commandId
+            }),
+            { status: 403, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+          );
+        }
+      }
+      
+      const isValidSignature = await verifyHMACSignature(rawBody, signature, timestamp, nonce);
       if (isValidSignature) {
         securityStatus = 'verified';
       } else {
         securityStatus = 'blocked';
-        console.warn('Invalid HMAC signature detected');
+        await logSecurityEvent('invalid_hmac', 'critical', 'Invalid HMAC signature detected', { signature: signature.substring(0, 8) + '...' }, ip, userAgent);
         
         return new Response(
           JSON.stringify({ 
@@ -309,13 +580,14 @@ serve(async (req) => {
         );
       }
     } else {
-      // Allow for development, but log warning
       console.warn('No HMAC signature provided - allowing in development mode');
+      await logSecurityEvent('no_hmac_signature', 'warning', 'Request without HMAC signature processed', {}, ip, userAgent);
       securityStatus = 'warning';
     }
 
-    // Validate required fields with helpful error messages
+    // Validate required fields
     if (!requestBody.command || !requestBody.source_ai) {
+      await logSecurityEvent('missing_required_fields', 'warning', 'Request missing required fields', { receivedFields: Object.keys(requestBody) }, ip, userAgent);
       return new Response(
         JSON.stringify({ 
           error: 'Missing required fields',
@@ -341,8 +613,12 @@ serve(async (req) => {
     await logAIInteraction(requestBody, response, {
       processing_time_ms: Date.now() - startTime,
       hmac_provided: !!signature,
-      ip_address: req.headers.get('x-forwarded-for') || 'unknown'
+      ip_address: ip,
+      rate_limit_count: rateLimitResult.requestCount
     });
+
+    // Record circuit breaker success
+    recordCircuitBreakerSuccess();
 
     return new Response(
       JSON.stringify(response),
@@ -355,6 +631,9 @@ serve(async (req) => {
   } catch (error: any) {
     const executionTime = Date.now() - startTime;
     console.error('Error in AI Command Gateway:', error);
+    
+    // Record circuit breaker failure
+    recordCircuitBreakerFailure();
     
     // Log the error for security monitoring
     try {
@@ -371,6 +650,8 @@ serve(async (req) => {
           },
           log_level: 'error'
         });
+
+      await logSecurityEvent('gateway_error', 'error', 'Unhandled error in gateway', { error: error.message }, ip, userAgent);
     } catch (logError) {
       console.error('Failed to log error:', logError);
     }

@@ -14,6 +14,63 @@ export type Database = {
   }
   public: {
     Tables: {
+      ai_command_queue: {
+        Row: {
+          action: string | null
+          command_text: string | null
+          created_at: string
+          dry_run: boolean | null
+          error_message: string | null
+          id: string
+          metadata: Json | null
+          parameters: Json | null
+          priority: number | null
+          processed_at: string | null
+          result: Json | null
+          risk_level: number | null
+          session_id: string | null
+          source: string | null
+          source_ai: string | null
+          status: string
+        }
+        Insert: {
+          action?: string | null
+          command_text?: string | null
+          created_at?: string
+          dry_run?: boolean | null
+          error_message?: string | null
+          id?: string
+          metadata?: Json | null
+          parameters?: Json | null
+          priority?: number | null
+          processed_at?: string | null
+          result?: Json | null
+          risk_level?: number | null
+          session_id?: string | null
+          source?: string | null
+          source_ai?: string | null
+          status?: string
+        }
+        Update: {
+          action?: string | null
+          command_text?: string | null
+          created_at?: string
+          dry_run?: boolean | null
+          error_message?: string | null
+          id?: string
+          metadata?: Json | null
+          parameters?: Json | null
+          priority?: number | null
+          processed_at?: string | null
+          result?: Json | null
+          risk_level?: number | null
+          session_id?: string | null
+          source?: string | null
+          source_ai?: string | null
+          status?: string
+        }
+        Relationships: []
+      }
       ai_insights: {
         Row: {
           confidence_score: number | null
@@ -53,6 +110,72 @@ export type Database = {
           response_data?: Json
           source_urls?: string[] | null
           tags?: string[] | null
+        }
+        Relationships: []
+      }
+      ai_messages: {
+        Row: {
+          created_at: string
+          id: string
+          message: string
+          metadata: Json | null
+          role: string
+          security_status: string | null
+          session_id: string | null
+          source: string | null
+          status: string | null
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          message: string
+          metadata?: Json | null
+          role: string
+          security_status?: string | null
+          session_id?: string | null
+          source?: string | null
+          status?: string | null
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          message?: string
+          metadata?: Json | null
+          role?: string
+          security_status?: string | null
+          session_id?: string | null
+          source?: string | null
+          status?: string | null
+        }
+        Relationships: []
+      }
+      ai_request_nonces: {
+        Row: {
+          created_at: string
+          ip: unknown | null
+          nonce: string
+          request_timestamp: number
+          signature: string | null
+          used_at: string | null
+          user_agent: string | null
+        }
+        Insert: {
+          created_at?: string
+          ip?: unknown | null
+          nonce: string
+          request_timestamp: number
+          signature?: string | null
+          used_at?: string | null
+          user_agent?: string | null
+        }
+        Update: {
+          created_at?: string
+          ip?: unknown | null
+          nonce?: string
+          request_timestamp?: number
+          signature?: string | null
+          used_at?: string | null
+          user_agent?: string | null
         }
         Relationships: []
       }
@@ -98,6 +221,33 @@ export type Database = {
           user_agent?: string | null
           user_id?: string | null
           viewport?: Json | null
+        }
+        Relationships: []
+      }
+      api_rate_limits: {
+        Row: {
+          created_at: string
+          id: string
+          ip: unknown
+          last_request_at: string
+          request_count: number
+          window_start: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          ip: unknown
+          last_request_at?: string
+          request_count?: number
+          window_start: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          ip?: unknown
+          last_request_at?: string
+          request_count?: number
+          window_start?: string
         }
         Relationships: []
       }
@@ -445,6 +595,39 @@ export type Database = {
           user_agent?: string | null
           user_identifier?: string
           withdrawn_at?: string | null
+        }
+        Relationships: []
+      }
+      security_events: {
+        Row: {
+          context: Json | null
+          created_at: string
+          event_type: string
+          id: string
+          ip: unknown | null
+          message: string
+          severity: string
+          user_agent: string | null
+        }
+        Insert: {
+          context?: Json | null
+          created_at?: string
+          event_type: string
+          id?: string
+          ip?: unknown | null
+          message: string
+          severity?: string
+          user_agent?: string | null
+        }
+        Update: {
+          context?: Json | null
+          created_at?: string
+          event_type?: string
+          id?: string
+          ip?: unknown | null
+          message?: string
+          severity?: string
+          user_agent?: string | null
         }
         Relationships: []
       }
