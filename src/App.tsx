@@ -13,6 +13,7 @@ import Analytics from "./pages/Analytics";
 import Auth from "./pages/Auth";
 import AutomationDashboard from "./pages/AutomationDashboard";
 import Assistant from "./pages/Assistant";
+import OperatorGuide from "./pages/OperatorGuide";
 import ProtectedRoute from "./components/ProtectedRoute";
 import AdminRoute from "./components/AdminRoute";
 
@@ -44,6 +45,11 @@ const App = () => {
               <ProtectedRoute>
                 <Assistant />
               </ProtectedRoute>
+            } />
+            <Route path="/operator-guide" element={
+              <AdminRoute>
+                <OperatorGuide />
+              </AdminRoute>
             } />
             <Route path="*" element={<NotFound />} />
           </Routes>

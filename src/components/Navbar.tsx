@@ -126,6 +126,21 @@ const Navbar = () => {
                 </NavigationMenuItem>
                 
                 <NavigationMenuItem>
+                  <NavigationMenuLink asChild>
+                    <Link to="/automation" className="text-sm font-medium hover:text-primary">
+                      Control Center
+                    </Link>
+                  </NavigationMenuLink>
+                </NavigationMenuItem>
+                <NavigationMenuItem>
+                  <NavigationMenuLink asChild>
+                    <Link to="/operator-guide" className="text-sm font-medium hover:text-primary">
+                      Operator Guide
+                    </Link>
+                  </NavigationMenuLink>
+                </NavigationMenuItem>
+                
+                <NavigationMenuItem>
                   <AuthCheck />
                 </NavigationMenuItem>
               </NavigationMenuList>
