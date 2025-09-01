@@ -3,16 +3,51 @@ import "https://deno.land/x/xhr@0.1.0/mod.ts";
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
-const corsHeaders = {
-  'Access-Control-Allow-Origin': 'https://joovupvjegfnjgkyxekf.supabase.co',
-  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type, x-signature, x-timestamp, x-nonce',
-  'Access-Control-Allow-Methods': 'POST, OPTIONS',
-  'X-Content-Type-Options': 'nosniff',
-  'X-Frame-Options': 'DENY',
-  'X-XSS-Protection': '1; mode=block',
-  'Strict-Transport-Security': 'max-age=31536000; includeSubDomains',
-  'Content-Security-Policy': "default-src 'none'; script-src 'none'; object-src 'none';",
-};
+function getCorsHeaders() {
+  const allowedOrigins = Deno.env.get('AI_GATEWAY_CORS_ORIGINS') || '*';
+  return {
+    'Access-Control-Allow-Origin': allowedOrigins,
+    'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type, x-signature, x-timestamp, x-nonce',
+    'Access-Control-Allow-Methods': 'POST, GET, OPTIONS',
+    'X-Content-Type-Options': 'nosniff',
+    'X-Frame-Options': 'DENY',
+    'X-XSS-Protection': '1; mode=block',
+    'Strict-Transport-Security': 'max-age=31536000; includeSubDomains',
+    'Content-Security-Policy': "default-src 'none'; script-src 'none'; object-src 'none';",
+  };
+}
+
+function extractClientIP(req: Request): string | null {
+  // Check various headers for client IP
+  const forwardedFor = req.headers.get('x-forwarded-for');
+  if (forwardedFor) {
+    // Take the first IP in the chain (original client)
+    const firstIP = forwardedFor.split(',')[0].trim();
+    // Validate IP format to prevent inet parsing errors
+    if (isValidIP(firstIP)) {
+      return firstIP;
+    }
+  }
+  
+  const realIP = req.headers.get('x-real-ip');
+  if (realIP && isValidIP(realIP.trim())) {
+    return realIP.trim();
+  }
+  
+  const clientIP = req.headers.get('x-client-ip');
+  if (clientIP && isValidIP(clientIP.trim())) {
+    return clientIP.trim();
+  }
+  
+  return null;
+}
+
+function isValidIP(ip: string): boolean {
+  // Basic IP validation for IPv4 and IPv6
+  const ipv4Regex = /^(\d{1,3}\.){3}\d{1,3}$/;
+  const ipv6Regex = /^([0-9a-fA-F]{1,4}:){7}[0-9a-fA-F]{1,4}$/;
+  return ipv4Regex.test(ip) || ipv6Regex.test(ip);
+}
 
 const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
 const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
@@ -56,7 +91,7 @@ const RATE_LIMIT_WINDOW = 60000; // 1 minute
 const RATE_LIMIT_MAX_REQUESTS = 100;
 const TIMESTAMP_MAX_AGE = 30000; // 30 seconds
 
-async function logSecurityEvent(eventType: string, severity: 'info' | 'warning' | 'error' | 'critical', message: string, context: any = {}, ip?: string, userAgent?: string) {
+async function logSecurityEvent(eventType: string, severity: 'info' | 'warning' | 'error' | 'critical', message: string, context: any = {}, ip?: string | null, userAgent?: string) {
   try {
     await supabase
       .from('security_events')
@@ -65,7 +100,7 @@ async function logSecurityEvent(eventType: string, severity: 'info' | 'warning' 
         severity,
         message,
         context,
-        ip,
+        ip: ip || null,
         user_agent: userAgent
       });
   } catch (error) {
@@ -102,7 +137,13 @@ function recordCircuitBreakerFailure() {
   }
 }
 
-async function checkRateLimit(ip: string): Promise<{ allowed: boolean; requestCount: number }> {
+async function checkRateLimit(ip: string | null): Promise<{ allowed: boolean; requestCount: number }> {
+  if (!ip) {
+    // Allow requests without IP but log it
+    console.warn('Rate limit check skipped - no IP available');
+    return { allowed: true, requestCount: 0 };
+  }
+
   const now = new Date();
   const windowStart = new Date(Math.floor(now.getTime() / RATE_LIMIT_WINDOW) * RATE_LIMIT_WINDOW);
   
@@ -155,7 +196,7 @@ async function checkRateLimit(ip: string): Promise<{ allowed: boolean; requestCo
   }
 }
 
-async function checkAndStoreNonce(nonce: string, signature: string, timestamp: string, ip: string, userAgent: string): Promise<boolean> {
+async function checkAndStoreNonce(nonce: string, signature: string, timestamp: string, ip: string | null, userAgent: string): Promise<boolean> {
   try {
     // Check if nonce already exists
     const { data: existing } = await supabase
@@ -169,14 +210,14 @@ async function checkAndStoreNonce(nonce: string, signature: string, timestamp: s
       return false; // Nonce already used
     }
     
-    // Store the nonce
+    // Store the nonce (handle null IP safely)
     const { error } = await supabase
       .from('ai_request_nonces')
       .insert({
         nonce,
         signature,
         request_timestamp: parseInt(timestamp),
-        ip,
+        ip: ip || null,
         user_agent: userAgent,
         used_at: new Date().toISOString()
       });
@@ -477,15 +518,44 @@ async function processQueuedCommand(commandId: string, command: string, request:
 }
 
 serve(async (req) => {
+  const url = new URL(req.url);
+  const ip = extractClientIP(req);
+  const userAgent = req.headers.get('user-agent') || 'unknown';
+  const corsHeaders = getCorsHeaders();
+
   // Handle CORS preflight requests
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders });
   }
 
+  // Health check endpoint
+  if (req.method === 'GET' && url.pathname === '/health') {
+    const healthStatus = {
+      status: 'healthy',
+      timestamp: new Date().toISOString(),
+      circuit_breaker: {
+        state: circuitBreaker.state,
+        failure_count: circuitBreaker.failureCount,
+        last_failure: circuitBreaker.lastFailureTime
+      },
+      rate_limits: {
+        window_ms: RATE_LIMIT_WINDOW,
+        max_requests: RATE_LIMIT_MAX_REQUESTS
+      },
+      security: {
+        hmac_enabled: !!hmacSecret,
+        timestamp_max_age: TIMESTAMP_MAX_AGE,
+        prompt_injection_enabled: true
+      }
+    };
+
+    return new Response(JSON.stringify(healthStatus, null, 2), {
+      headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+    });
+  }
+
   const startTime = Date.now();
   const commandId = crypto.randomUUID();
-  const ip = req.headers.get('x-forwarded-for') || 'unknown';
-  const userAgent = req.headers.get('user-agent') || 'unknown';
 
   try {
     console.log('AI Command Gateway called', { ip, userAgent, commandId });
