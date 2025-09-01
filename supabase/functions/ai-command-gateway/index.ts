@@ -702,7 +702,7 @@ serve(async (req) => {
           example: {
             command: "backup all data to drive",
             source_ai: "perplexity",
-            priority: "normal"
+            priority: 1
           },
           help: "See /operator-guide for integration examples"
         }),
