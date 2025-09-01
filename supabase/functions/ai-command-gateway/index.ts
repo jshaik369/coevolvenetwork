@@ -197,6 +197,28 @@ async function queueCommand(request: AICommandRequest, commandId: string): Promi
   }
 }
 
+// Normalize different input formats to our standard format
+function normalizeRequestFormat(body: any): AICommandRequest {
+  // Handle different input formats
+  if (body.action && !body.command) {
+    // Convert action-style to command-style
+    body.command = body.action;
+    delete body.action;
+  }
+  
+  if (body.source && !body.source_ai) {
+    // Convert source to source_ai
+    body.source_ai = body.source;
+    delete body.source;
+  }
+  
+  // Set defaults
+  body.priority = body.priority || 'normal';
+  body.dry_run = body.dry_run || false;
+  
+  return body as AICommandRequest;
+}
+
 async function processQueuedCommand(commandId: string, command: string, request: AICommandRequest) {
   // Parse the natural language command and route to appropriate automation
   try {
@@ -248,11 +270,19 @@ serve(async (req) => {
     
     try {
       requestBody = JSON.parse(rawBody);
+      
+      // Transform different input formats to standard format
+      requestBody = normalizeRequestFormat(requestBody);
     } catch {
       return new Response(
         JSON.stringify({ 
-          error: 'Invalid JSON in request body',
-          security_status: 'blocked'
+          error: 'Invalid JSON in request body. Expected format: {"command": "your command", "source_ai": "your_ai"}',
+          security_status: 'blocked',
+          example: {
+            command: "backup all data to drive",
+            source_ai: "perplexity",
+            priority: "normal"
+          }
         }),
         { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
@@ -284,12 +314,20 @@ serve(async (req) => {
       securityStatus = 'warning';
     }
 
-    // Validate required fields
+    // Validate required fields with helpful error messages
     if (!requestBody.command || !requestBody.source_ai) {
       return new Response(
         JSON.stringify({ 
-          error: 'Missing required fields: command and source_ai',
-          security_status: securityStatus
+          error: 'Missing required fields',
+          security_status: securityStatus,
+          required_fields: ['command', 'source_ai'],
+          received_fields: Object.keys(requestBody),
+          example: {
+            command: "backup all data to drive",
+            source_ai: "perplexity",
+            priority: "normal"
+          },
+          help: "See /operator-guide for integration examples"
         }),
         { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );

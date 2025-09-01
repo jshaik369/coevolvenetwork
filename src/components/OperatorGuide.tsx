@@ -3,8 +3,12 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Copy, Shield, Brain, Zap, Globe, Code, FileText, ExternalLink } from 'lucide-react';
+import { Input } from '@/components/ui/input';
+import { Textarea } from '@/components/ui/textarea';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Copy, Shield, Brain, Zap, Globe, Code, FileText, ExternalLink, Play, CheckCircle, XCircle } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
+import TestRequestPanel from './TestRequestPanel';
 
 const OperatorGuide = () => {
   const [copiedSection, setCopiedSection] = useState<string | null>(null);
@@ -222,11 +226,12 @@ print(response.json())`;
       </div>
 
       <Tabs defaultValue="overview" className="space-y-6">
-        <TabsList className="grid w-full grid-cols-5">
+        <TabsList className="grid w-full grid-cols-6">
           <TabsTrigger value="overview">Overview</TabsTrigger>
           <TabsTrigger value="perplexity">Perplexity Setup</TabsTrigger>
           <TabsTrigger value="gemini">Gemini Setup</TabsTrigger>
           <TabsTrigger value="technical">Technical Integration</TabsTrigger>
+          <TabsTrigger value="testing">Testing</TabsTrigger>
           <TabsTrigger value="security">Security</TabsTrigger>
         </TabsList>
 
@@ -435,6 +440,10 @@ print(response.json())`;
               </CardContent>
             </Card>
           </div>
+        </TabsContent>
+
+        <TabsContent value="testing" className="space-y-6">
+          <TestRequestPanel webhookUrl={webhookUrl} />
         </TabsContent>
 
         <TabsContent value="security" className="space-y-6">
