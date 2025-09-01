@@ -8,6 +8,7 @@ import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Copy, ExternalLink, Play, Shield, Book, Terminal, CheckCircle, AlertTriangle } from 'lucide-react';
 import { toast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
+import KnowledgeExport from '@/components/KnowledgeExport';
 
 const OperatorGuide = () => {
   const [selfTestRunning, setSelfTestRunning] = useState(false);
@@ -146,8 +147,9 @@ const OperatorGuide = () => {
         </div>
 
         <Tabs defaultValue="overview" className="w-full">
-          <TabsList className="grid w-full grid-cols-5">
+          <TabsList className="grid w-full grid-cols-6">
             <TabsTrigger value="overview">Overview</TabsTrigger>
+            <TabsTrigger value="export">Export</TabsTrigger>
             <TabsTrigger value="self-test">Self-Test</TabsTrigger>
             <TabsTrigger value="runbooks">Runbooks</TabsTrigger>
             <TabsTrigger value="assistant">Assistant</TabsTrigger>
@@ -186,6 +188,10 @@ const OperatorGuide = () => {
                 </Alert>
               </CardContent>
             </Card>
+          </TabsContent>
+
+          <TabsContent value="export" className="space-y-4">
+            <KnowledgeExport />
           </TabsContent>
 
           <TabsContent value="self-test" className="space-y-4">
