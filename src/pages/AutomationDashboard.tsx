@@ -8,7 +8,8 @@ import { Separator } from '@/components/ui/separator';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
-import { Play, Pause, Settings, Eye, Calendar, Shield, AlertTriangle, CheckCircle } from 'lucide-react';
+import { Play, Pause, Settings, Eye, Calendar, Shield, AlertTriangle, CheckCircle, Zap, TestTube } from 'lucide-react';
+import PageLayout from '@/components/PageLayout';
 
 interface AutomationJob {
   id: string;
@@ -164,6 +165,31 @@ const AutomationDashboard = () => {
     }
   };
 
+  const runSelfTest = async () => {
+    try {
+      const response = await supabase.functions.invoke('system-self-test');
+      
+      if (response.error) throw response.error;
+      
+      const results = response.data;
+      const overallStatus = results.overall_status;
+      
+      toast({
+        title: `System Self-Test ${overallStatus === 'pass' ? 'Passed' : 'Issues Found'}`,
+        description: `${results.results.filter(r => r.status === 'pass').length}/${results.results.length} tests passed`,
+        variant: overallStatus === 'fail' ? 'destructive' : 'default'
+      });
+      
+      loadLogs(); // Refresh to show test results
+    } catch (error: any) {
+      toast({
+        title: "Self-test failed",
+        description: error.message,
+        variant: "destructive",
+      });
+    }
+  };
+
   const getJobTypeIcon = (jobType: string) => {
     switch (jobType) {
       case 'perplexity_insights':
@@ -218,19 +244,31 @@ const AutomationDashboard = () => {
   }
 
   return (
-    <div className="container mx-auto p-6 space-y-6">
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-3xl font-bold">Automation Dashboard</h1>
-          <p className="text-muted-foreground">
-            Manage and monitor your AI-powered business automation workflows
-          </p>
+    <PageLayout showContact={false}>
+      <div className="container mx-auto p-6 space-y-6">
+        <div className="flex items-center justify-between">
+          <div>
+            <h1 className="text-3xl font-bold">C.E.Network Control Center</h1>
+            <p className="text-muted-foreground">
+              Forensic-grade automation for UHNW client services
+            </p>
+          </div>
+          <div className="flex items-center gap-4">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={runSelfTest}
+              className="gap-2"
+            >
+              <TestTube className="h-4 w-4" />
+              Self-Test
+            </Button>
+            <div className="flex items-center gap-2">
+              <Shield className="h-5 w-5 text-green-500" />
+              <span className="text-sm text-muted-foreground">CIA-Level Security</span>
+            </div>
+          </div>
         </div>
-        <div className="flex items-center gap-2">
-          <Shield className="h-5 w-5 text-green-500" />
-          <span className="text-sm text-muted-foreground">Forensic Logging Active</span>
-        </div>
-      </div>
 
       <Tabs defaultValue="jobs" className="space-y-6">
         <TabsList>
@@ -443,6 +481,7 @@ const AutomationDashboard = () => {
         </TabsContent>
       </Tabs>
     </div>
+  </PageLayout>
   );
 };
 
