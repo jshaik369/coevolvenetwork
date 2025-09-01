@@ -14,6 +14,48 @@ export type Database = {
   }
   public: {
     Tables: {
+      ai_insights: {
+        Row: {
+          confidence_score: number | null
+          created_at: string
+          created_by: string | null
+          expires_at: string | null
+          id: string
+          insight_type: string
+          is_archived: boolean
+          query_text: string
+          response_data: Json
+          source_urls: string[] | null
+          tags: string[] | null
+        }
+        Insert: {
+          confidence_score?: number | null
+          created_at?: string
+          created_by?: string | null
+          expires_at?: string | null
+          id?: string
+          insight_type: string
+          is_archived?: boolean
+          query_text: string
+          response_data: Json
+          source_urls?: string[] | null
+          tags?: string[] | null
+        }
+        Update: {
+          confidence_score?: number | null
+          created_at?: string
+          created_by?: string | null
+          expires_at?: string | null
+          id?: string
+          insight_type?: string
+          is_archived?: boolean
+          query_text?: string
+          response_data?: Json
+          source_urls?: string[] | null
+          tags?: string[] | null
+        }
+        Relationships: []
+      }
       analytics: {
         Row: {
           collaboration: Json | null
@@ -59,6 +101,143 @@ export type Database = {
         }
         Relationships: []
       }
+      automation_jobs: {
+        Row: {
+          config: Json
+          created_at: string
+          created_by: string | null
+          description: string | null
+          dry_run_enabled: boolean
+          id: string
+          is_enabled: boolean
+          job_type: string
+          last_run_at: string | null
+          name: string
+          next_run_at: string | null
+          schedule_cron: string | null
+          updated_at: string
+        }
+        Insert: {
+          config?: Json
+          created_at?: string
+          created_by?: string | null
+          description?: string | null
+          dry_run_enabled?: boolean
+          id?: string
+          is_enabled?: boolean
+          job_type: string
+          last_run_at?: string | null
+          name: string
+          next_run_at?: string | null
+          schedule_cron?: string | null
+          updated_at?: string
+        }
+        Update: {
+          config?: Json
+          created_at?: string
+          created_by?: string | null
+          description?: string | null
+          dry_run_enabled?: boolean
+          id?: string
+          is_enabled?: boolean
+          job_type?: string
+          last_run_at?: string | null
+          name?: string
+          next_run_at?: string | null
+          schedule_cron?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      automation_logs: {
+        Row: {
+          created_at: string
+          created_by: string | null
+          execution_id: string
+          execution_time_ms: number | null
+          id: string
+          job_id: string | null
+          log_level: string
+          message: string
+          metadata: Json | null
+          status: string
+        }
+        Insert: {
+          created_at?: string
+          created_by?: string | null
+          execution_id?: string
+          execution_time_ms?: number | null
+          id?: string
+          job_id?: string | null
+          log_level?: string
+          message: string
+          metadata?: Json | null
+          status: string
+        }
+        Update: {
+          created_at?: string
+          created_by?: string | null
+          execution_id?: string
+          execution_time_ms?: number | null
+          id?: string
+          job_id?: string | null
+          log_level?: string
+          message?: string
+          metadata?: Json | null
+          status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "automation_logs_job_id_fkey"
+            columns: ["job_id"]
+            isOneToOne: false
+            referencedRelation: "automation_jobs"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      business_intelligence: {
+        Row: {
+          analysis_data: Json
+          analysis_type: string
+          created_at: string
+          created_by: string | null
+          id: string
+          is_confidential: boolean
+          key_findings: string[] | null
+          priority_level: string | null
+          recommendations: string[] | null
+          target_entity: string
+          updated_at: string
+        }
+        Insert: {
+          analysis_data: Json
+          analysis_type: string
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          is_confidential?: boolean
+          key_findings?: string[] | null
+          priority_level?: string | null
+          recommendations?: string[] | null
+          target_entity: string
+          updated_at?: string
+        }
+        Update: {
+          analysis_data?: Json
+          analysis_type?: string
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          is_confidential?: boolean
+          key_findings?: string[] | null
+          priority_level?: string | null
+          recommendations?: string[] | null
+          target_entity?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       email_signups: {
         Row: {
           created_at: string
@@ -80,6 +259,63 @@ export type Database = {
           id?: string
           source?: string | null
           updated_at?: string
+        }
+        Relationships: []
+      }
+      gmail_metadata: {
+        Row: {
+          classification: string | null
+          created_at: string
+          created_by: string | null
+          has_attachments: boolean | null
+          id: string
+          labels: string[] | null
+          lead_score: number | null
+          message_id: string
+          metadata: Json | null
+          processed_at: string
+          sender_email: string
+          sender_name: string | null
+          snippet: string | null
+          subject: string | null
+          thread_id: string | null
+          timestamp: string
+        }
+        Insert: {
+          classification?: string | null
+          created_at?: string
+          created_by?: string | null
+          has_attachments?: boolean | null
+          id?: string
+          labels?: string[] | null
+          lead_score?: number | null
+          message_id: string
+          metadata?: Json | null
+          processed_at?: string
+          sender_email: string
+          sender_name?: string | null
+          snippet?: string | null
+          subject?: string | null
+          thread_id?: string | null
+          timestamp: string
+        }
+        Update: {
+          classification?: string | null
+          created_at?: string
+          created_by?: string | null
+          has_attachments?: boolean | null
+          id?: string
+          labels?: string[] | null
+          lead_score?: number | null
+          message_id?: string
+          metadata?: Json | null
+          processed_at?: string
+          sender_email?: string
+          sender_name?: string | null
+          snippet?: string | null
+          subject?: string | null
+          thread_id?: string | null
+          timestamp?: string
         }
         Relationships: []
       }
@@ -119,6 +355,45 @@ export type Database = {
           session_id?: string
           timestamp?: string
           vitals?: Json | null
+        }
+        Relationships: []
+      }
+      privacy_consents: {
+        Row: {
+          consent_details: Json | null
+          consent_given: boolean
+          consent_type: string
+          created_at: string
+          expires_at: string | null
+          id: string
+          ip_address: unknown | null
+          user_agent: string | null
+          user_identifier: string
+          withdrawn_at: string | null
+        }
+        Insert: {
+          consent_details?: Json | null
+          consent_given: boolean
+          consent_type: string
+          created_at?: string
+          expires_at?: string | null
+          id?: string
+          ip_address?: unknown | null
+          user_agent?: string | null
+          user_identifier: string
+          withdrawn_at?: string | null
+        }
+        Update: {
+          consent_details?: Json | null
+          consent_given?: boolean
+          consent_type?: string
+          created_at?: string
+          expires_at?: string | null
+          id?: string
+          ip_address?: unknown | null
+          user_agent?: string | null
+          user_identifier?: string
+          withdrawn_at?: string | null
         }
         Relationships: []
       }

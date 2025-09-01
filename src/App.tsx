@@ -11,6 +11,7 @@ import Careers from "./pages/Careers";
 import PrivacyPolicy from "./pages/PrivacyPolicy";
 import Analytics from "./pages/Analytics";
 import Auth from "./pages/Auth";
+import AutomationDashboard from "./pages/AutomationDashboard";
 import ProtectedRoute from "./components/ProtectedRoute";
 
 const App = () => {
@@ -30,6 +31,11 @@ const App = () => {
             <Route path="/analytics" element={
               <ProtectedRoute>
                 <Analytics />
+              </ProtectedRoute>
+            } />
+            <Route path="/automation" element={
+              <ProtectedRoute>
+                <AutomationDashboard />
               </ProtectedRoute>
             } />
             <Route path="*" element={<NotFound />} />
