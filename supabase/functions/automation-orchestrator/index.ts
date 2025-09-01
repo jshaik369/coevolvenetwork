@@ -13,11 +13,14 @@ const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
 const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
 interface OrchestrationRequest {
-  action: 'run_job' | 'schedule_job' | 'get_status' | 'list_jobs' | 'cancel_job';
+  action: 'run_job' | 'schedule_job' | 'get_status' | 'list_jobs' | 'cancel_job' | 'ai_command';
   jobId?: string;
   jobType?: string;
   config?: any;
   dryRun?: boolean;
+  command?: string;
+  source_ai?: string;
+  metadata?: any;
 }
 
 interface AutomationJob {
@@ -378,7 +381,7 @@ serve(async (req) => {
       );
     }
     
-    const { action, jobId, jobType, config = {}, dryRun = false }: OrchestrationRequest = await req.json();
+    const { action, jobId, jobType, config = {}, dryRun = false, command, source_ai, metadata }: OrchestrationRequest = await req.json();
 
     switch (action) {
       case 'run_job': {
@@ -458,6 +461,52 @@ serve(async (req) => {
             success: true,
             jobId,
             recentLogs: logs || []
+          }),
+          { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        );
+      }
+
+      case 'ai_command': {
+        if (!command) {
+          return new Response(
+            JSON.stringify({ error: 'Command is required for ai_command action' }),
+            { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+          );
+        }
+
+        // Parse and execute AI command using existing Perplexity integration
+        const parseResponse = await fetch(`${supabaseUrl}/functions/v1/perplexity-insights`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${supabaseServiceKey}`,
+          },
+          body: JSON.stringify({
+            query: `Parse this AI command and return actionable instructions: "${command}". 
+            
+            Available actions: backup_drive, analyze_trends, system_status, privacy_audit, run_automation
+            
+            Respond with JSON containing: {action: string, parameters: object, explanation: string}`,
+            insight_type: 'ai_command_parsing',
+            tags: ['ai-gateway', source_ai || 'unknown'],
+            dryRun: dryRun
+          })
+        });
+
+        if (!parseResponse.ok) {
+          throw new Error(`AI command parsing failed: ${parseResponse.status}`);
+        }
+
+        const parseResult = await parseResponse.json();
+        
+        return new Response(
+          JSON.stringify({
+            success: true,
+            command_id: executionId,
+            parsed_command: parseResult,
+            source_ai: source_ai || 'unknown',
+            status: 'processed',
+            message: `AI command from ${source_ai || 'unknown'} processed successfully`
           }),
           { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
         );

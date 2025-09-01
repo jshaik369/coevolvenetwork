@@ -1,5 +1,8 @@
 project_id = "joovupvjegfnjgkyxekf"
 
+[functions.ai-command-gateway]
+verify_jwt = false
+
 [functions.analytics]
 verify_jwt = false
 
