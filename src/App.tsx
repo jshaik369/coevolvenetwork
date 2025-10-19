@@ -14,6 +14,7 @@ import Auth from "./pages/Auth";
 import AutomationDashboard from "./pages/AutomationDashboard";
 import Assistant from "./pages/Assistant";
 import OperatorGuide from "./pages/OperatorGuide";
+import BackupsDashboard from "./pages/BackupsDashboard";
 import ProtectedRoute from "./components/ProtectedRoute";
 import AdminRoute from "./components/AdminRoute";
 
@@ -47,6 +48,11 @@ const App = () => {
               </ProtectedRoute>
             } />
             <Route path="/operator-guide" element={<OperatorGuide />} />
+            <Route path="/analytics/backups" element={
+              <AdminRoute>
+                <BackupsDashboard />
+              </AdminRoute>
+            } />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </BrowserRouter>

@@ -774,3 +774,150 @@ serve(async (req) => {
     );
   }
 });
+
+// Enhanced routes for Perplexity and Gemini natural language processing
+// These routes accept NL and convert to structured commands
+serve(async (req) => {
+  const url = new URL(req.url);
+  
+  // Handle Perplexity route
+  if (url.pathname === '/perplexity') {
+    if (req.method === 'OPTIONS') {
+      return new Response(null, { headers: getCorsHeaders() });
+    }
+    
+    try {
+      const { message } = await req.json();
+      const perplexityKey = Deno.env.get('PERPLEXITY_API_KEY');
+      
+      if (!perplexityKey) {
+        throw new Error('PERPLEXITY_API_KEY not configured');
+      }
+      
+      // Call Perplexity to convert NL to command
+      const response = await fetch('https://api.perplexity.ai/chat/completions', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${perplexityKey}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          model: 'llama-3.1-sonar-small-128k-online',
+          messages: [
+            {
+              role: 'system',
+              content: `You are an expert system administrator. Convert natural language requests into JSON commands for automation.
+              
+              Return ONLY valid JSON in this format:
+              {
+                "command": "shell command or action description",
+                "source_ai": "perplexity",
+                "priority": 1,
+                "dry_run": false,
+                "metadata": {
+                  "original_request": "user's original message",
+                  "interpretation": "your interpretation"
+                }
+              }
+              
+              Priority levels: 0=low, 1=normal, 2=high, 3=urgent`
+            },
+            {
+              role: 'user',
+              content: message
+            }
+          ],
+          temperature: 0.2,
+          max_tokens: 500
+        }),
+      });
+      
+      const data = await response.json();
+      const commandJson = JSON.parse(data.choices[0].message.content);
+      
+      return new Response(
+        JSON.stringify({ success: true, command: commandJson }),
+        { headers: { ...getCorsHeaders(), 'Content-Type': 'application/json' } }
+      );
+    } catch (error) {
+      console.error('Perplexity route error:', error);
+      return new Response(
+        JSON.stringify({ error: error instanceof Error ? error.message : 'Unknown error' }),
+        { status: 500, headers: { ...getCorsHeaders(), 'Content-Type': 'application/json' } }
+      );
+    }
+  }
+  
+  // Handle Gemini route
+  if (url.pathname === '/gemini') {
+    if (req.method === 'OPTIONS') {
+      return new Response(null, { headers: getCorsHeaders() });
+    }
+    
+    try {
+      const { message } = await req.json();
+      const geminiKey = Deno.env.get('GEMINI_API_KEY');
+      
+      if (!geminiKey) {
+        throw new Error('GEMINI_API_KEY not configured');
+      }
+      
+      // Call Gemini to convert NL to command
+      const response = await fetch(
+        `https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=${geminiKey}`,
+        {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            contents: [{
+              parts: [{
+                text: `You are an expert system administrator. Convert this natural language request into a JSON command:
+
+"${message}"
+
+Return ONLY valid JSON in this exact format:
+{
+  "command": "shell command or action description",
+  "source_ai": "gemini",
+  "priority": 1,
+  "dry_run": false,
+  "metadata": {
+    "original_request": "${message}",
+    "interpretation": "your interpretation"
+  }
+}
+
+Priority levels: 0=low, 1=normal, 2=high, 3=urgent`
+              }]
+            }],
+            generationConfig: {
+              temperature: 0.2,
+              maxOutputTokens: 500
+            }
+          }),
+        }
+      );
+      
+      const data = await response.json();
+      const commandText = data.candidates[0].content.parts[0].text;
+      const commandJson = JSON.parse(commandText);
+      
+      return new Response(
+        JSON.stringify({ success: true, command: commandJson }),
+        { headers: { ...getCorsHeaders(), 'Content-Type': 'application/json' } }
+      );
+    } catch (error) {
+      console.error('Gemini route error:', error);
+      return new Response(
+        JSON.stringify({ error: error instanceof Error ? error.message : 'Unknown error' }),
+        { status: 500, headers: { ...getCorsHeaders(), 'Content-Type': 'application/json' } }
+      );
+    }
+  }
+  
+  // Default 404 for unknown routes
+  return new Response(
+    JSON.stringify({ error: 'Not found' }),
+    { status: 404, headers: { ...getCorsHeaders(), 'Content-Type': 'application/json' } }
+  );
+});

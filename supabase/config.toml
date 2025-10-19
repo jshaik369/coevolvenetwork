@@ -25,7 +25,7 @@ verify_jwt = true
 verify_jwt = true
 
 [functions.drive-backup]
-verify_jwt = true
+verify_jwt = false
 
 [functions.system-self-test]
 verify_jwt = true
