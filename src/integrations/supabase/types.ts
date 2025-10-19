@@ -442,6 +442,116 @@ export type Database = {
         }
         Relationships: []
       }
+      business_card_analytics: {
+        Row: {
+          card_id: string
+          click_events: Json | null
+          created_at: string | null
+          device_info: Json | null
+          id: string
+          interactions: Json | null
+          is_before_unload: boolean | null
+          location: Json | null
+          session_id: string
+          time_on_page: number | null
+          timestamp: string | null
+          user_agent: string | null
+          viewer_id: string | null
+          viewport: Json | null
+        }
+        Insert: {
+          card_id: string
+          click_events?: Json | null
+          created_at?: string | null
+          device_info?: Json | null
+          id?: string
+          interactions?: Json | null
+          is_before_unload?: boolean | null
+          location?: Json | null
+          session_id: string
+          time_on_page?: number | null
+          timestamp?: string | null
+          user_agent?: string | null
+          viewer_id?: string | null
+          viewport?: Json | null
+        }
+        Update: {
+          card_id?: string
+          click_events?: Json | null
+          created_at?: string | null
+          device_info?: Json | null
+          id?: string
+          interactions?: Json | null
+          is_before_unload?: boolean | null
+          location?: Json | null
+          session_id?: string
+          time_on_page?: number | null
+          timestamp?: string | null
+          user_agent?: string | null
+          viewer_id?: string | null
+          viewport?: Json | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "business_card_analytics_card_id_fkey"
+            columns: ["card_id"]
+            isOneToOne: false
+            referencedRelation: "business_cards"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      business_cards: {
+        Row: {
+          bio: string | null
+          created_at: string | null
+          email: string | null
+          id: string
+          is_active: boolean | null
+          name: string
+          organization: string | null
+          phone: string | null
+          profile_photo: string | null
+          social_links: Json | null
+          title: string | null
+          unique_id: string
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          bio?: string | null
+          created_at?: string | null
+          email?: string | null
+          id?: string
+          is_active?: boolean | null
+          name: string
+          organization?: string | null
+          phone?: string | null
+          profile_photo?: string | null
+          social_links?: Json | null
+          title?: string | null
+          unique_id: string
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          bio?: string | null
+          created_at?: string | null
+          email?: string | null
+          id?: string
+          is_active?: boolean | null
+          name?: string
+          organization?: string | null
+          phone?: string | null
+          profile_photo?: string | null
+          social_links?: Json | null
+          title?: string | null
+          unique_id?: string
+          updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
       business_intelligence: {
         Row: {
           analysis_data: Json
@@ -717,6 +827,10 @@ export type Database = {
           _timestamp: string
           _user_id: string
         }
+        Returns: string
+      }
+      generate_card_unique_id: {
+        Args: Record<PropertyKey, never>
         Returns: string
       }
       has_any_role: {

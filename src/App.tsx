@@ -15,6 +15,11 @@ import AutomationDashboard from "./pages/AutomationDashboard";
 import Assistant from "./pages/Assistant";
 import OperatorGuide from "./pages/OperatorGuide";
 import BackupsDashboard from "./pages/BackupsDashboard";
+import CardView from "./pages/CardView";
+import CreateCard from "./pages/CreateCard";
+import EditCard from "./pages/EditCard";
+import MyCards from "./pages/MyCards";
+import CardAnalytics from "./pages/CardAnalytics";
 import ProtectedRoute from "./components/ProtectedRoute";
 import AdminRoute from "./components/AdminRoute";
 
@@ -52,6 +57,27 @@ const App = () => {
               <AdminRoute>
                 <BackupsDashboard />
               </AdminRoute>
+            } />
+            <Route path="/card/:uniqueId" element={<CardView />} />
+            <Route path="/card/create" element={
+              <ProtectedRoute>
+                <CreateCard />
+              </ProtectedRoute>
+            } />
+            <Route path="/card/edit/:cardId" element={
+              <ProtectedRoute>
+                <EditCard />
+              </ProtectedRoute>
+            } />
+            <Route path="/cards" element={
+              <ProtectedRoute>
+                <MyCards />
+              </ProtectedRoute>
+            } />
+            <Route path="/card/analytics/:cardId" element={
+              <ProtectedRoute>
+                <CardAnalytics />
+              </ProtectedRoute>
             } />
             <Route path="*" element={<NotFound />} />
           </Routes>
