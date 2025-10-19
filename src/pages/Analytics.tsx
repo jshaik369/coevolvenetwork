@@ -1,5 +1,6 @@
 import AnalyticsDashboard from '@/components/AnalyticsDashboard';
 import HeatmapVisualization from '@/components/HeatmapVisualization';
+import AutomationMetrics from '@/components/AutomationMetrics';
 import SEO from '@/components/SEO';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
@@ -14,8 +15,9 @@ const Analytics = () => {
       <Tabs defaultValue="dashboard" className="w-full">
         <div className="border-b">
           <div className="container mx-auto px-4">
-            <TabsList className="grid w-full max-w-md grid-cols-2">
+            <TabsList className="grid w-full max-w-2xl grid-cols-3">
               <TabsTrigger value="dashboard">Dashboard</TabsTrigger>
+              <TabsTrigger value="automation">Automation</TabsTrigger>
               <TabsTrigger value="heatmap">Heatmap</TabsTrigger>
             </TabsList>
           </div>
@@ -23,6 +25,10 @@ const Analytics = () => {
 
         <TabsContent value="dashboard" className="mt-0">
           <AnalyticsDashboard />
+        </TabsContent>
+
+        <TabsContent value="automation" className="mt-0">
+          <AutomationMetrics />
         </TabsContent>
 
         <TabsContent value="heatmap" className="mt-0">
