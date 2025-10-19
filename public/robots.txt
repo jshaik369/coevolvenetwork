@@ -1,9 +1,16 @@
-
 User-agent: *
 Allow: /
 
-# Sitemap location
-Sitemap: https://coevolve.network/sitemap.xml
+# Disallow admin areas
+Disallow: /admin/
+Disallow: /analytics/
+Disallow: /automation/
+Disallow: /backups/
+Disallow: /operator/
+Disallow: /assistant/
 
-# Optimize crawling
-Crawl-delay: 10
+# Sitemap location
+Sitemap: https://coevolvenetwork.com/sitemap.xml
+
+# Optimize crawling - allow fast crawling for better indexing
+Crawl-delay: 1

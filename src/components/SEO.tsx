@@ -17,8 +17,8 @@ interface SEOProps {
 }
 
 const SEO: React.FC<SEOProps> = ({
-  title = 'Co-Evolve Network - Global Platform for AI-Augmented Creators',
-  description = 'Connect creators worldwide through accountability partnerships, pitch feedback, and verifiable outcomes in the AI creator economy. Barcelona and Bangalore hubs.',
+  title = 'Co-Evolve Network - AI Creator Platform | Accountability Partnerships for Global Creators',
+  description = 'Join the global AI creator platform connecting Barcelona and Bangalore. Build accountability partnerships, get pitch feedback, and achieve verifiable outcomes in the AI creator economy. Free to join.',
   type = 'website',
   name = 'Co-Evolve Network',
   imageUrl = '/lovable-uploads/483a60b1-7682-4b57-847c-2628c6e6f3ed.png',
@@ -26,7 +26,20 @@ const SEO: React.FC<SEOProps> = ({
   modifiedDate,
   author,
   category,
-  keywords = ['AI creators', 'accountability partnerships', 'creator economy', 'Barcelona', 'Bangalore', 'AI collaboration', 'creator network', 'AI augmented creators', 'global platform'],
+  keywords = [
+    'AI creator platform',
+    'accountability partnerships',
+    'creator economy 2025',
+    'AI collaboration network',
+    'Barcelona creators',
+    'Bangalore creators',
+    'global creator community',
+    'AI-augmented creators',
+    'pitch feedback platform',
+    'creator accountability',
+    'AI networking',
+    'creator support network'
+  ],
   isBlogPost = false
 }) => {
   const location = useLocation();
@@ -42,17 +55,35 @@ const SEO: React.FC<SEOProps> = ({
     '@type': 'Organization',
     name: 'Co-Evolve Network',
     url: 'https://coevolvenetwork.com',
-    logo: 'https://coevolvenetwork.com/lovable-uploads/483a60b1-7682-4b57-847c-2628c6e6f3ed.png',
-    description: 'Global platform for AI-augmented creators connecting through accountability partnerships',
+    logo: {
+      '@type': 'ImageObject',
+      url: 'https://coevolvenetwork.com/lovable-uploads/483a60b1-7682-4b57-847c-2628c6e6f3ed.png',
+      width: 512,
+      height: 512
+    },
+    description: 'Global AI creator platform connecting Barcelona and Bangalore through accountability partnerships and verifiable outcomes',
+    foundingDate: '2024',
+    foundingLocation: {
+      '@type': 'Place',
+      address: {
+        '@type': 'PostalAddress',
+        addressLocality: 'Barcelona',
+        addressCountry: 'ES'
+      }
+    },
+    areaServed: ['ES', 'IN', 'US', 'GB', 'DE', 'FR', 'Worldwide'],
+    slogan: 'Building the future of AI-augmented creation together',
     contactPoint: {
       '@type': 'ContactPoint',
       contactType: 'customer service',
-      email: 'hello@coevolvenetwork.com'
+      email: 'hello@coevolvenetwork.com',
+      availableLanguage: ['en', 'es', 'hi']
     },
     sameAs: [
       'https://www.linkedin.com/company/co-evolve-network',
       'https://twitter.com/coevolvenetwork'
-    ]
+    ],
+    keywords: cleanKeywords.join(', ')
   };
 
   // Enhanced BlogPosting JSON-LD structured data
@@ -106,7 +137,21 @@ const SEO: React.FC<SEOProps> = ({
       <meta name="description" content={description} />
       <link rel="canonical" href={currentUrl} />
       <meta name="keywords" content={keywordString} />
+      
+      {/* Enhanced crawler directives for better indexing */}
       <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1" />
+      <meta name="googlebot" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1" />
+      <meta name="bingbot" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1" />
+      
+      {/* Geographic targeting */}
+      <meta name="geo.region" content="ES-CT" />
+      <meta name="geo.placename" content="Barcelona" />
+      <meta name="geo.position" content="41.3874;2.1686" />
+      <meta name="ICBM" content="41.3874, 2.1686" />
+      
+      {/* Language and locale */}
+      <meta httpEquiv="content-language" content="en-US" />
+      <meta name="language" content="English" />
       
       {/* Open Graph / Facebook */}
       <meta property="og:type" content={isBlogPost ? 'article' : type} />
