@@ -77,48 +77,63 @@ async function logExecution(
 async function getGoogleAccessToken(): Promise<string> {
   try {
     const serviceAccount = JSON.parse(googleServiceAccountKey);
+    const { create } = await import("https://deno.land/x/djwt@v2.9.1/mod.ts");
     
-    // Create JWT token
     const now = Math.floor(Date.now() / 1000);
-    const header = {
-      alg: 'RS256',
-      typ: 'JWT'
-    };
     
-    const payload = {
-      iss: serviceAccount.client_email,
-      sub: googleWorkspaceAdminEmail,
-      scope: 'https://www.googleapis.com/auth/gmail.readonly',
-      aud: 'https://oauth2.googleapis.com/token',
-      iat: now,
-      exp: now + 3600
-    };
-
-    // Note: In a real implementation, you would need to sign the JWT with the private key
-    // For now, this is a placeholder that shows the structure
-    console.log('Would create JWT with payload:', payload);
+    // Extract and format private key
+    const privateKeyPem = serviceAccount.private_key
+      .replace(/-----BEGIN PRIVATE KEY-----/, '')
+      .replace(/-----END PRIVATE KEY-----/, '')
+      .replace(/\s/g, '');
     
-    // This is a simplified version - in production you need proper JWT signing
+    const privateKeyDer = Uint8Array.from(atob(privateKeyPem), c => c.charCodeAt(0));
+    
+    const privateKey = await crypto.subtle.importKey(
+      "pkcs8",
+      privateKeyDer,
+      { name: "RSASSA-PKCS1-v1_5", hash: "SHA-256" },
+      false,
+      ["sign"]
+    );
+    
+    // Create signed JWT
+    const jwt = await create(
+      { alg: "RS256", typ: "JWT" },
+      {
+        iss: serviceAccount.client_email,
+        sub: googleWorkspaceAdminEmail,
+        scope: 'https://www.googleapis.com/auth/gmail.readonly',
+        aud: 'https://oauth2.googleapis.com/token',
+        iat: now,
+        exp: now + 3600
+      },
+      privateKey
+    );
+    
+    console.log('JWT created, exchanging for access token...');
+    
+    // Exchange JWT for access token
     const response = await fetch('https://oauth2.googleapis.com/token', {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/x-www-form-urlencoded',
-      },
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
       body: new URLSearchParams({
         grant_type: 'urn:ietf:params:oauth:grant-type:jwt-bearer',
-        assertion: 'JWT_TOKEN_PLACEHOLDER' // This would be the signed JWT
+        assertion: jwt
       })
     });
 
     if (!response.ok) {
-      throw new Error(`Failed to get access token: ${response.status}`);
+      const errorText = await response.text();
+      throw new Error(`Failed to get access token: ${response.status} - ${errorText}`);
     }
 
     const tokenData = await response.json();
+    console.log('Successfully obtained access token');
     return tokenData.access_token;
   } catch (error) {
     console.error('Error getting Google access token:', error);
-    throw new Error('Failed to authenticate with Google Workspace');
+    throw new Error(`Failed to authenticate with Google Workspace: ${error.message}`);
   }
 }
 
@@ -325,63 +340,41 @@ serve(async (req) => {
       { maxResults, query, dryRun }
     );
 
-    if (dryRun) {
-      console.log('DRY RUN MODE: Would process Gmail with query:', query);
-      await logExecution(null, executionId, 'completed', 'Dry run completed successfully', { 
-        query, 
-        maxResults,
-        dryRun: true,
-        message: 'No actual Gmail processing in dry run mode'
-      });
-      
-      return new Response(
-        JSON.stringify({ 
-          success: true, 
-          dryRun: true,
-          message: 'Dry run completed - no actual Gmail processing',
-          query,
-          maxResults
-        }),
-        { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-      );
+    // Use reduced max for dry run
+    const actualMaxResults = dryRun ? Math.min(maxResults, 5) : maxResults;
+
+    // Authenticate with Google Workspace
+    console.log('Authenticating with Google Workspace...');
+    const accessToken = await getGoogleAccessToken();
+    
+    // Fetch Gmail messages
+    console.log(`Fetching up to ${actualMaxResults} messages${dryRun ? ' (dry run)' : ''}...`);
+    const messages = await fetchGmailMessages(accessToken, query, actualMaxResults);
+    console.log(`Fetched ${messages.length} messages from Gmail`);
+    
+    // Process messages
+    const processedMessages = messages.map(processMessage);
+    
+    // Store in database (skip in dry run)
+    if (!dryRun && processedMessages.length > 0) {
+      await storeGmailMetadata(processedMessages);
+      console.log(`Stored ${processedMessages.length} messages in database`);
     }
 
-    // For now, we'll simulate processing since proper JWT signing is needed
-    console.log('SIMULATION MODE: Gmail processing would authenticate and fetch messages');
-    
-    // Simulated response for demonstration
-    const simulatedMessages: ProcessedMessage[] = [
-      {
-        messageId: 'simulated_001',
-        threadId: 'thread_001',
-        senderEmail: 'potential.lead@example.com',
-        senderName: 'Potential Lead',
-        subject: 'Business Partnership Opportunity',
-        snippet: 'Hi, I am interested in discussing a potential business partnership...',
-        timestamp: new Date().toISOString(),
-        leadScore: 85,
-        classification: 'lead',
-        hasAttachments: false,
-        labels: ['INBOX']
-      }
-    ];
-
-    // In production, you would:
-    // 1. Get access token: const accessToken = await getGoogleAccessToken();
-    // 2. Fetch messages: const messages = await fetchGmailMessages(accessToken, query, maxResults);
-    // 3. Process messages: const processedMessages = messages.map(processMessage);
-    // 4. Store in database: await storeGmailMetadata(processedMessages);
-
     const executionTime = Date.now() - startTime;
+    const leadsFound = processedMessages.filter(m => m.classification === 'lead').length;
+    
     await logExecution(
       null, 
       executionId, 
       'completed', 
-      `Successfully processed ${simulatedMessages.length} Gmail messages`, 
+      `Successfully processed ${processedMessages.length} Gmail messages${dryRun ? ' (dry run)' : ''}`, 
       { 
-        messages_processed: simulatedMessages.length,
-        leads_found: simulatedMessages.filter(m => m.classification === 'lead').length,
-        processing_type: processingType
+        messages_processed: processedMessages.length,
+        leads_found: leadsFound,
+        processing_type: processingType,
+        dry_run: dryRun,
+        stored: !dryRun
       },
       executionTime
     );
@@ -391,13 +384,14 @@ serve(async (req) => {
     return new Response(
       JSON.stringify({
         success: true,
-        messagesProcessed: simulatedMessages.length,
-        leadsFound: simulatedMessages.filter(m => m.classification === 'lead').length,
-        simulation: true,
+        messagesProcessed: processedMessages.length,
+        leadsFound,
+        dryRun,
         metadata: {
           execution_time_ms: executionTime,
           processing_type: processingType,
-          query
+          query,
+          stored_to_database: !dryRun
         }
       }),
       { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }

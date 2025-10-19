@@ -12,6 +12,7 @@ interface BackupMetadata {
     name: string;
     rowCount: number;
     checksum: string;
+    driveFileId?: string;
   }[];
   totalSize: number;
 }
@@ -55,6 +56,14 @@ serve(async (req) => {
       totalSize: 0
     };
 
+    // Get Google Drive access token
+    const accessToken = await getGoogleAccessToken(googleServiceAccount);
+    
+    // Create backup folder
+    const folderName = `backup_${new Date().toISOString().split('T')[0]}`;
+    const folderId = await createDriveFolder(accessToken, folderName);
+    console.log(`Created backup folder: ${folderName} (${folderId})`);
+
     // Export all tables
     for (const tableName of tablesToBackup) {
       console.log(`Backing up table: ${tableName}`);
@@ -77,36 +86,61 @@ serve(async (req) => {
         .map(b => b.toString(16).padStart(2, '0'))
         .join('');
 
+      // Upload to Google Drive
+      const fileName = `${tableName}_${backupData.timestamp}.json`;
+      const driveFileId = await uploadToGoogleDrive(
+        accessToken,
+        fileName,
+        tableData,
+        folderId
+      );
+
+      console.log(`Uploaded ${tableName} to Drive (file ID: ${driveFileId})`);
+
       backupData.tables.push({
         name: tableName,
         rowCount: count || 0,
-        checksum: checksumHex
+        checksum: checksumHex,
+        driveFileId
       });
 
       backupData.totalSize += tableData.length;
 
-      // Upload to Google Drive
-      await uploadToGoogleDrive(
-        googleServiceAccount,
-        `${tableName}_${backupData.timestamp}.json`,
-        tableData
-      );
+      // Store in backup history
+      await supabase.from('backup_history').insert({
+        backup_timestamp: backupData.timestamp,
+        drive_file_id: driveFileId,
+        drive_folder_id: folderId,
+        table_name: tableName,
+        row_count: count || 0,
+        file_size_bytes: tableData.length,
+        checksum: checksumHex,
+        status: 'completed',
+        metadata: {
+          folder_name: folderName
+        }
+      });
     }
 
     // Create metadata file
     const metadataJson = JSON.stringify(backupData, null, 2);
-    await uploadToGoogleDrive(
-      googleServiceAccount,
+    const metadataFileId = await uploadToGoogleDrive(
+      accessToken,
       `backup_metadata_${backupData.timestamp}.json`,
-      metadataJson
+      metadataJson,
+      folderId
     );
 
     // Log successful backup
     await supabase.from('automation_logs').insert({
       job_id: null,
       status: 'success',
-      message: `Backup completed: ${backupData.tables.length} tables backed up`,
-      metadata: backupData,
+      message: `Backup completed: ${backupData.tables.length} tables backed up to Google Drive`,
+      metadata: {
+        ...backupData,
+        folder_id: folderId,
+        metadata_file_id: metadataFileId
+      },
       log_level: 'info'
     });
 
@@ -115,7 +149,9 @@ serve(async (req) => {
     return new Response(
       JSON.stringify({ 
         success: true, 
-        backup: backupData 
+        backup: backupData,
+        folderId,
+        folderName
       }),
       { 
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
@@ -138,30 +174,131 @@ serve(async (req) => {
   }
 });
 
-async function uploadToGoogleDrive(
-  serviceAccountJson: string,
-  fileName: string,
-  fileContent: string
-): Promise<string> {
+async function getGoogleAccessToken(serviceAccountJson: string): Promise<string> {
   const serviceAccount = JSON.parse(serviceAccountJson);
+  const { create } = await import("https://deno.land/x/djwt@v2.9.1/mod.ts");
   
-  // Get access token
-  const jwtHeader = btoa(JSON.stringify({ alg: 'RS256', typ: 'JWT' }));
   const now = Math.floor(Date.now() / 1000);
-  const jwtClaim = btoa(JSON.stringify({
-    iss: serviceAccount.client_email,
-    scope: 'https://www.googleapis.com/auth/drive.file',
-    aud: 'https://oauth2.googleapis.com/token',
-    exp: now + 3600,
-    iat: now
-  }));
+  
+  // Extract and format private key
+  const privateKeyPem = serviceAccount.private_key
+    .replace(/-----BEGIN PRIVATE KEY-----/, '')
+    .replace(/-----END PRIVATE KEY-----/, '')
+    .replace(/\s/g, '');
+  
+  const privateKeyDer = Uint8Array.from(atob(privateKeyPem), c => c.charCodeAt(0));
+  
+  const privateKey = await crypto.subtle.importKey(
+    "pkcs8",
+    privateKeyDer,
+    { name: "RSASSA-PKCS1-v1_5", hash: "SHA-256" },
+    false,
+    ["sign"]
+  );
+  
+  // Create signed JWT
+  const jwt = await create(
+    { alg: "RS256", typ: "JWT" },
+    {
+      iss: serviceAccount.client_email,
+      scope: 'https://www.googleapis.com/auth/drive.file',
+      aud: 'https://oauth2.googleapis.com/token',
+      iat: now,
+      exp: now + 3600
+    },
+    privateKey
+  );
+  
+  // Exchange JWT for access token
+  const tokenResponse = await fetch('https://oauth2.googleapis.com/token', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+    body: new URLSearchParams({
+      grant_type: 'urn:ietf:params:oauth:grant-type:jwt-bearer',
+      assertion: jwt
+    })
+  });
 
-  // Note: In production, you'd need to sign the JWT properly
-  // For now, using direct API key approach would be simpler
-  console.log(`Simulating upload of ${fileName} (${fileContent.length} bytes)`);
-  
-  // This is a placeholder - in production, implement proper Google Drive API authentication
-  // and file upload using the service account credentials
-  
-  return `drive://backups/${fileName}`;
+  if (!tokenResponse.ok) {
+    const error = await tokenResponse.text();
+    throw new Error(`Failed to get access token: ${error}`);
+  }
+
+  const tokenData = await tokenResponse.json();
+  return tokenData.access_token;
+}
+
+async function createDriveFolder(
+  accessToken: string,
+  folderName: string
+): Promise<string> {
+  const metadata = {
+    name: folderName,
+    mimeType: 'application/vnd.google-apps.folder'
+  };
+
+  const response = await fetch('https://www.googleapis.com/drive/v3/files', {
+    method: 'POST',
+    headers: {
+      'Authorization': `Bearer ${accessToken}`,
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(metadata)
+  });
+
+  if (!response.ok) {
+    const error = await response.text();
+    throw new Error(`Failed to create folder: ${error}`);
+  }
+
+  const result = await response.json();
+  return result.id;
+}
+
+async function uploadToGoogleDrive(
+  accessToken: string,
+  fileName: string,
+  fileContent: string,
+  folderId?: string
+): Promise<string> {
+  // Create metadata
+  const metadata = {
+    name: fileName,
+    mimeType: 'application/json',
+    ...(folderId && { parents: [folderId] })
+  };
+
+  // Create multipart upload
+  const boundary = '-------314159265358979323846';
+  const delimiter = "\r\n--" + boundary + "\r\n";
+  const close_delim = "\r\n--" + boundary + "--";
+
+  const multipartRequestBody =
+    delimiter +
+    'Content-Type: application/json; charset=UTF-8\r\n\r\n' +
+    JSON.stringify(metadata) +
+    delimiter +
+    'Content-Type: application/json\r\n\r\n' +
+    fileContent +
+    close_delim;
+
+  const response = await fetch(
+    'https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart',
+    {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${accessToken}`,
+        'Content-Type': `multipart/related; boundary="${boundary}"`
+      },
+      body: multipartRequestBody
+    }
+  );
+
+  if (!response.ok) {
+    const error = await response.text();
+    throw new Error(`Failed to upload file: ${error}`);
+  }
+
+  const result = await response.json();
+  return result.id;
 }

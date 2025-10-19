@@ -397,6 +397,51 @@ export type Database = {
           },
         ]
       }
+      backup_history: {
+        Row: {
+          backup_timestamp: string
+          checksum: string
+          created_at: string | null
+          created_by: string | null
+          drive_file_id: string
+          drive_folder_id: string | null
+          file_size_bytes: number
+          id: string
+          metadata: Json | null
+          row_count: number
+          status: string
+          table_name: string
+        }
+        Insert: {
+          backup_timestamp: string
+          checksum: string
+          created_at?: string | null
+          created_by?: string | null
+          drive_file_id: string
+          drive_folder_id?: string | null
+          file_size_bytes: number
+          id?: string
+          metadata?: Json | null
+          row_count: number
+          status?: string
+          table_name: string
+        }
+        Update: {
+          backup_timestamp?: string
+          checksum?: string
+          created_at?: string | null
+          created_by?: string | null
+          drive_file_id?: string
+          drive_folder_id?: string | null
+          file_size_bytes?: number
+          id?: string
+          metadata?: Json | null
+          row_count?: number
+          status?: string
+          table_name?: string
+        }
+        Relationships: []
+      }
       business_intelligence: {
         Row: {
           analysis_data: Json
