@@ -25,7 +25,7 @@ const OperatorGuide = () => {
     });
   };
 
-  const webhookUrl = "https://joovupvjegfnjgkyxekf.supabase.co/functions/v1/ai-command-gateway";
+  const webhookUrl = "https://gvmmwtfavsrhtaqqybbu.supabase.co/functions/v1/ai-command-gateway";
   const hmacSecret = "change-this-to-your-secure-secret";
 
   const perplexityPrompt = `You are an AI operator for the CoEvolve Network automation platform. I will give you natural language commands that you should convert into API calls to execute business automation tasks.

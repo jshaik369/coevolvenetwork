@@ -47,27 +47,27 @@ const OperatorGuide = () => {
   const quickLinks = [
     {
       title: "Supabase Dashboard",
-      url: "https://supabase.com/dashboard/project/joovupvjegfnjgkyxekf",
+      url: "https://supabase.com/dashboard/project/gvmmwtfavsrhtaqqybbu",
       description: "Main project dashboard"
     },
     {
       title: "Edge Functions",
-      url: "https://supabase.com/dashboard/project/joovupvjegfnjgkyxekf/functions",
+      url: "https://supabase.com/dashboard/project/gvmmwtfavsrhtaqqybbu/functions",
       description: "View and manage Edge Functions"
     },
     {
       title: "Function Logs",
-      url: "https://supabase.com/dashboard/project/joovupvjegfnjgkyxekf/functions",
+      url: "https://supabase.com/dashboard/project/gvmmwtfavsrhtaqqybbu/functions",
       description: "Monitor function execution logs"
     },
     {
       title: "Database",
-      url: "https://supabase.com/dashboard/project/joovupvjegfnjgkyxekf/editor",
+      url: "https://supabase.com/dashboard/project/gvmmwtfavsrhtaqqybbu/editor",
       description: "SQL Editor and table management"
     },
     {
       title: "Users & Auth",
-      url: "https://supabase.com/dashboard/project/joovupvjegfnjgkyxekf/auth/users",
+      url: "https://supabase.com/dashboard/project/gvmmwtfavsrhtaqqybbu/auth/users",
       description: "User management and authentication"
     }
   ];

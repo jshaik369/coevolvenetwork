@@ -38,7 +38,7 @@ const KnowledgeExport = () => {
 ## 🔧 TECHNICAL INFRASTRUCTURE
 
 ### Supabase Project Configuration
-- **Project ID**: joovupvjegfnjgkyxekf
+- **Project ID**: gvmmwtfavsrhtaqqybbu
 - **Anon Key**: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Impvb3Z1cHZqZWdmbmpna3l4ZWtmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTUxMjk0MTYsImV4cCI6MjA3MDcwNTQxNn0.nTvkfT4wJOuSm0LUyrrFGR2xXM6A0-5ManYo31mg9Q8
 
 ### Database Schema
@@ -537,11 +537,11 @@ const KnowledgeExport = () => {
 ## 📚 ADDITIONAL RESOURCES
 
 ### Documentation Links
-- [Supabase Dashboard](https://supabase.com/dashboard/project/joovupvjegfnjgkyxekf)
-- [Edge Functions](https://supabase.com/dashboard/project/joovupvjegfnjgkyxekf/functions)
-- [Database Editor](https://supabase.com/dashboard/project/joovupvjegfnjgkyxekf/editor)
-- [Authentication](https://supabase.com/dashboard/project/joovupvjegfnjgkyxekf/auth/users)
-- [Function Logs](https://supabase.com/dashboard/project/joovupvjegfnjgkyxekf/functions)
+- [Supabase Dashboard](https://supabase.com/dashboard/project/gvmmwtfavsrhtaqqybbu)
+- [Edge Functions](https://supabase.com/dashboard/project/gvmmwtfavsrhtaqqybbu/functions)
+- [Database Editor](https://supabase.com/dashboard/project/gvmmwtfavsrhtaqqybbu/editor)
+- [Authentication](https://supabase.com/dashboard/project/gvmmwtfavsrhtaqqybbu/auth/users)
+- [Function Logs](https://supabase.com/dashboard/project/gvmmwtfavsrhtaqqybbu/functions)
 
 ### Support Contacts
 - **Technical Issues**: Check Edge Function logs and system diagnostics

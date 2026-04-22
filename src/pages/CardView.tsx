@@ -94,7 +94,7 @@ const CardView = () => {
 
     if (isBeforeUnload) {
       navigator.sendBeacon(
-        `https://joovupvjegfnjgkyxekf.supabase.co/rest/v1/business_card_analytics`,
+        `https://gvmmwtfavsrhtaqqybbu.supabase.co/rest/v1/business_card_analytics`,
         JSON.stringify(analyticsData)
       );
     } else {
